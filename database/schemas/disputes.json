@@ -1,0 +1,17 @@
+{
+  "collectionName": "disputes",
+  "schema": {
+    "id": { "type": "string", "description": "Unique dispute ID" },
+    "bountyId": { "type": "string", "description": "Associated bounty ID" },
+    "submissionId": { "type": "string", "description": "Associated submission ID" },
+    "initiatorUid": { "type": "string", "description": "UID of dispute initiator" },
+    "reason": { "type": "string", "description": "Reason for dispute" },
+    "evidence": { "type": "array", "description": "Evidence documents/hashes" },
+    "status": { "type": "string", "enum": ["pending", "in_review", "resolved", "closed"], "description": "Dispute status" },
+    "resolution": { "type": "string", "description": "Resolution details" },
+    "validators": { "type": "array", "description": "Assigned validators" },
+    "votes": { "type": "object", "description": "Validator votes" },
+    "createdAt": { "type": "timestamp", "description": "Dispute creation timestamp" },
+    "resolvedAt": { "type": "timestamp", "description": "Resolution timestamp" }
+  }
+}

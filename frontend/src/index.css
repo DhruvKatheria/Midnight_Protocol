@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-brand text-gray-100 font-sans tracking-wide;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.05), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(26, 58, 90, 0.1), transparent 25%);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-surface/80 backdrop-blur-md border border-white/5 shadow-xl;
+  }
+  
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-sm border border-white/5 rounded-2xl shadow-lg transition duration-300 hover:border-teal/30 hover:shadow-teal/10 hover:-translate-y-1;
+  }
+
+  .primary-btn {
+    @apply bg-teal text-brand font-bold py-3 px-6 rounded-xl transition duration-300 hover:bg-teal/90 hover:shadow-lg hover:shadow-teal/20 focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2 focus:ring-offset-brand active:scale-95;
+  }
+
+  .secondary-btn {
+    @apply bg-surface text-gray-300 font-bold py-3 px-6 rounded-xl border border-white/10 transition duration-300 hover:bg-accent/30 hover:text-white hover:border-teal/50 focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2 focus:ring-offset-brand active:scale-95;
+  }
+
+  .neon-text {
+    @apply text-teal drop-shadow-[0_0_8px_rgba(0,229,255,0.8)];
+  }
+  
+  .header-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-teal to-blue-400 font-extrabold;
+  }
+  
+  .nav-active {
+    @apply text-white border-b-2 border-teal;
+  }
+  
+  .input-field {
+    @apply w-full bg-brand/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition duration-200;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0B0E14; }
+::-webkit-scrollbar-thumb { background: #1A3A5A; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #00E5FF; }
