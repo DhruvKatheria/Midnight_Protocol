@@ -143,6 +143,34 @@
       "appId": "758146675",
       "createdAt": "2026-04-03T04:38:15.514Z",
       "updatedAt": "2026-04-03T04:39:12.514Z"
+    },
+    "ca74264e-d377-4e5b-aab1-8b2574e910f7": {
+      "id": "ca74264e-d377-4e5b-aab1-8b2574e910f7",
+      "sponsorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "title": "Reva",
+      "description": "Butki",
+      "briefHash": "9ac13afebc7698bd8faf1ab351d7df44b963a3263686604e3eb96c885d53807d",
+      "amount": 2,
+      "deadline": 1770056940,
+      "status": "open",
+      "txId": "mock_tx_confirm",
+      "appId": "758146675",
+      "createdAt": "2026-04-03T05:32:56.055Z",
+      "updatedAt": "2026-04-03T05:32:56.055Z"
+    },
+    "daed8bed-4893-4dc0-9ea0-ca6266f6aed6": {
+      "id": "daed8bed-4893-4dc0-9ea0-ca6266f6aed6",
+      "sponsorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "title": "shreya",
+      "description": "korean",
+      "briefHash": "e35fbb1a86bcd6f6736a4e44e9ebe408465f0d28fba23421191a9ea64168fac5",
+      "amount": 5,
+      "deadline": 1792779300,
+      "status": "open",
+      "txId": "7H3RJ6TKO3BMNSY2XXETGFMGRPKJ67MFROCQZ3YMSAPFAD6BTLSQ",
+      "appId": "758184434",
+      "createdAt": "2026-04-03T06:12:17.092Z",
+      "updatedAt": "2026-04-03T06:12:17.092Z"
     }
   },
   "submissions": {
@@ -453,6 +481,28 @@
       "timestamp": "2026-04-03T04:39:12.518Z",
       "createdAt": "2026-04-03T04:39:12.518Z",
       "updatedAt": "2026-04-03T04:39:12.518Z"
+    },
+    "9d2ef50c-cc2a-4b87-9934-a4cab2fe8a5f": {
+      "id": "9d2ef50c-cc2a-4b87-9934-a4cab2fe8a5f",
+      "bountyId": "ca74264e-d377-4e5b-aab1-8b2574e910f7",
+      "action": "bounty_created",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_tx_confirm",
+      "amount": 2,
+      "timestamp": "2026-04-03T05:32:56.055Z",
+      "createdAt": "2026-04-03T05:32:56.058Z",
+      "updatedAt": "2026-04-03T05:32:56.058Z"
+    },
+    "11b5d18f-a4d2-4f00-bd44-1a7aa1deb139": {
+      "id": "11b5d18f-a4d2-4f00-bd44-1a7aa1deb139",
+      "bountyId": "daed8bed-4893-4dc0-9ea0-ca6266f6aed6",
+      "action": "bounty_created",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "7H3RJ6TKO3BMNSY2XXETGFMGRPKJ67MFROCQZ3YMSAPFAD6BTLSQ",
+      "amount": 5,
+      "timestamp": "2026-04-03T06:12:17.092Z",
+      "createdAt": "2026-04-03T06:12:17.096Z",
+      "updatedAt": "2026-04-03T06:12:17.096Z"
     }
   },
   "users": {

@@ -7,9 +7,11 @@ from algosdk import account, mnemonic
 from algosdk.v2client import algod
 from algosdk.transaction import (
     ApplicationCreateTxn,
+    PaymentTxn,
     OnComplete,
     StateSchema
 )
+from algosdk import logic
 import time
 import os
 from dotenv import load_dotenv
@@ -92,13 +94,16 @@ except Exception as e:
 try:
     print("\n📦 Creating application...")
     
+    # Full escrow contract global state:
+    # Uints (5): status, amount, deadline, votes_approve, votes_reject
+    # Byte-slices (7): sponsor, brief_hash, contributor, work_hash, val1, val2, val3
     txn = ApplicationCreateTxn(
         sender=deployer_address,
         sp=params,
         on_complete=OnComplete.NoOpOC,
         approval_program=approval_program,
         clear_program=clear_program,
-        global_schema = StateSchema(1, 2),
+        global_schema = StateSchema(5, 7),
         local_schema = StateSchema(0, 0),
     )
     
@@ -126,6 +131,34 @@ try:
                 print(f"\n✅ SUCCESS! Contract deployed")
                 print(f"📱 APP_ID: {app_id}")
                 print(f"💾 Round: {confirmed_txn['confirmed-round']}")
+                
+                # Fund the app address with 0.2 ALGO for minimum balance
+                app_address = logic.get_application_address(app_id)
+                print(f"\n💰 Funding app address: {app_address}")
+                fund_params = algod_client.suggested_params()
+                fund_txn = PaymentTxn(
+                    sender=deployer_address,
+                    sp=fund_params,
+                    receiver=app_address,
+                    amt=200_000  # 0.2 ALGO
+                )
+                signed_fund = fund_txn.sign(private_key)
+                fund_tx_id = algod_client.send_transaction(signed_fund)
+                print(f"📤 Funding txn sent: {fund_tx_id}")
+                
+                # Wait for fund confirmation
+                fund_timeout = 15
+                fund_start = time.time()
+                while time.time() - fund_start < fund_timeout:
+                    try:
+                        fund_info = algod_client.pending_transaction_info(fund_tx_id)
+                        if fund_info.get("confirmed-round", 0) > 0:
+                            print(f"✅ App funded with 0.2 ALGO")
+                            break
+                    except:
+                        pass
+                    time.sleep(1)
+                
                 print(f"\n📋 Update your .env with:")
                 print(f"APP_ID={app_id}")
                 
@@ -133,6 +166,7 @@ try:
                 with open(".env.deployment", "w") as f:
                     f.write(f"APP_ID={app_id}\n")
                     f.write(f"DEPLOYER_ADDRESS={deployer_address}\n")
+                    f.write(f"APP_ADDRESS={app_address}\n")
                     f.write(f"DEPLOYMENT_ROUND={confirmed_txn['confirmed-round']}\n")
                 
                 print(f"\n📄 Configuration saved to .env.deployment")

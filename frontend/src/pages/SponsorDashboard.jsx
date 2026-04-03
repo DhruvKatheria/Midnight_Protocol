@@ -43,9 +43,9 @@ export default function SponsorDashboard() {
 
       let signedTxns = [];
       if (unsignedAppCallTxn && unsignedPayTxn) {
-        // Real wallet flow — sign with Pera
+        // Real wallet flow — sign with Pera (payTxn first, appCallTxn second — contract requires Gtxn[0] = Payment)
         toast.loading("Please sign with Pera Wallet...", { id: createToast });
-        signedTxns = await signAndSend([unsignedAppCallTxn, unsignedPayTxn]);
+        signedTxns = await signAndSend([unsignedPayTxn, unsignedAppCallTxn]);
       } else {
         // Demo mode — skip signing
         toast.loading("Processing (demo)...", { id: createToast });

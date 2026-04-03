@@ -32,14 +32,14 @@ router.post("/create", async (req, res) => {
     let appCallTxn = await buildAppCallTxn(sponsorAddress, "lock", [briefHash, deadline]);
     let payTxn = await buildPayTxn(sponsorAddress, APP_ADDRESS, reward);
     
-    // Group the transactions atomically
-    algosdk.assignGroupID([appCallTxn, payTxn]);
+    // Group the transactions atomically — payTxn MUST be Gtxn[0] (contract asserts Gtxn[0] is Payment)
+    algosdk.assignGroupID([payTxn, appCallTxn]);
     
     res.json({
       success: true,
       briefHash,
-      unsignedAppCallTxn: Buffer.from(appCallTxn.toByte()).toString('base64'),
-      unsignedPayTxn: Buffer.from(payTxn.toByte()).toString('base64')
+      unsignedPayTxn: Buffer.from(payTxn.toByte()).toString('base64'),
+      unsignedAppCallTxn: Buffer.from(appCallTxn.toByte()).toString('base64')
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -50,12 +50,10 @@ router.post("/create", async (req, res) => {
 router.post("/confirm", async (req, res) => {
   try {
     const { signedGroupTxnBase64, bountyData } = req.body;
-    let txId = "mock_tx_confirm";
-    try {
-       txId = await submitSignedTxn(signedGroupTxnBase64);
-    } catch(e) {
-       console.warn("Algorand connection not set up properly, continuing with mock txId :", e.message);
-    }
+    
+    // Submit the signed transaction group to the Algorand blockchain
+    const txId = await submitSignedTxn(signedGroupTxnBase64);
+    console.log("✅ Blockchain transaction confirmed:", txId);
     
     const bountyId = uuidv4();
     const newBounty = {
