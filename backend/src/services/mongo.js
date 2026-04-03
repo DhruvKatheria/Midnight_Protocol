@@ -111,6 +111,15 @@ async function createSubmission(submissionData) {
   }
 }
 
+async function getSubmissionsByUser(address) {
+  try {
+    return await Submission.find({ contributorAddress: address }).lean();
+  } catch (err) {
+    console.error("Error fetching submissions by user:", err);
+    throw err;
+  }
+}
+
 async function getSubmissionsByBounty(bountyId) {
   try {
     return await Submission.find({ bountyId }).lean();
@@ -193,6 +202,15 @@ async function getTransaction(txnId) {
   }
 }
 
+async function getAllTransactions() {
+  try {
+    return await Transaction.find().sort({ timestamp: -1 }).lean();
+  } catch (err) {
+    console.error("Error fetching all transactions:", err);
+    throw err;
+  }
+}
+
 async function getTransactionsByUser(uid) {
   try {
     return await Transaction.find({
@@ -230,6 +248,7 @@ module.exports = {
   // Submissions
   createSubmission,
   getSubmissionsByBounty,
+  getSubmissionsByUser,
   updateSubmission,
   
   // Disputes
@@ -241,6 +260,7 @@ module.exports = {
   // Transactions
   createTransaction,
   getTransaction,
+  getAllTransactions,
   getTransactionsByUser,
   getTransactionsByBounty,
 };

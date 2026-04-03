@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const { hashBrief, verifyBrief } = require("../services/hashing");
 const { uploadToIPFS } = require("../services/ipfs");
 const { buildAppCallTxn } = require("../services/algorand");
-const { createSubmission, getSubmissionsByBounty, updateBounty, getSubmission, updateSubmission, createTransaction, getBounty } = require("../services/mongo");
+const { createSubmission, getSubmissionsByBounty, updateBounty, getSubmission, updateSubmission, createTransaction, getBounty, getSubmissionsByUser } = require("../services/mongo");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -115,7 +115,9 @@ router.post("/reveal", upload.single("workFile"), async (req, res) => {
 router.get("/mine", async (req, res) => {
   try {
     const address = req.query.address;
-    res.json({ success: true, submissions: [] });
+    if (!address) return res.status(400).json({ error: "Address is required" });
+    const submissions = await getSubmissionsByUser(address);
+    res.json({ success: true, submissions });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
