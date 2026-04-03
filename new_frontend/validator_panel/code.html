@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SettleChain | Validator Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "inverse-on-surface": "#565554",
+            "primary-container": "#00cffc",
+            "tertiary-container": "#7696fd",
+            "secondary-fixed-dim": "#d6d4d3",
+            "on-surface-variant": "#adaaaa",
+            "on-error-container": "#ffa8a3",
+            "secondary-fixed": "#e5e2e1",
+            "secondary-dim": "#d6d4d3",
+            "primary-fixed": "#00cffc",
+            "tertiary-fixed-dim": "#819fff",
+            "tertiary": "#89a5ff",
+            "outline": "#777575",
+            "error": "#ff716c",
+            "error-container": "#9f0519",
+            "surface-container-highest": "#262626",
+            "on-secondary-fixed": "#403f3f",
+            "tertiary-fixed": "#95adff",
+            "inverse-primary": "#006880",
+            "surface-container": "#1a1919",
+            "error-dim": "#d7383b",
+            "on-primary-fixed": "#002a35",
+            "on-background": "#ffffff",
+            "surface-variant": "#262626",
+            "on-tertiary-fixed": "#001345",
+            "background": "#0e0e0e",
+            "on-primary": "#004a5d",
+            "on-tertiary": "#00236d",
+            "surface-container-high": "#201f1f",
+            "surface-container-lowest": "#000000",
+            "surface-dim": "#0e0e0e",
+            "surface-tint": "#69daff",
+            "on-secondary-container": "#d2d0cf",
+            "surface": "#0e0e0e",
+            "primary-dim": "#00c0ea",
+            "tertiary-dim": "#7999ff",
+            "outline-variant": "#494847",
+            "on-secondary-fixed-variant": "#5c5b5b",
+            "primary": "#69daff",
+            "on-primary-container": "#004050",
+            "on-surface": "#ffffff",
+            "secondary-container": "#474746",
+            "primary-fixed-dim": "#00c0ea",
+            "surface-bright": "#2c2c2c",
+            "on-primary-fixed-variant": "#004a5c",
+            "on-tertiary-fixed-variant": "#00318e",
+            "inverse-surface": "#fcf8f8",
+            "surface-container-low": "#131313",
+            "secondary": "#e5e2e1",
+            "on-tertiary-container": "#001851",
+            "on-error": "#490006",
+            "on-secondary": "#525151"
+          },
+          fontFamily: {
+            "headline": ["Plus Jakarta Sans"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .glass {
+      background: rgba(38, 38, 38, 0.6);
+      backdrop-filter: blur(20px);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30">
+<!-- TopNavBar Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 bg-neutral-900/70 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.4)] flex justify-between items-center px-6 py-4 max-w-full mx-auto">
+<div class="text-xl font-bold tracking-tighter text-cyan-400 font-headline">SettleChain</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-neutral-400 font-medium hover:text-neutral-200 transition-all duration-200" href="#">Dashboard</a>
+<a class="text-cyan-400 font-bold border-b-2 border-cyan-400 pb-1" href="#">Validator</a>
+<a class="text-neutral-400 font-medium hover:text-neutral-200 transition-all duration-200" href="#">Log</a>
+</div>
+<div class="flex items-center space-x-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-headline font-bold px-5 py-2 rounded-lg text-sm active:scale-95 transition-transform">
+        Connect Wallet
+      </button>
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant/15 flex items-center justify-center overflow-hidden">
+<img alt="User Wallet Avatar" class="w-full h-full object-cover" data-alt="abstract geometric pattern with glowing cyan and deep blue nodes representing a digital blockchain identity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMJ1pnrPezAsaVaohe9FNwLJ_k-KIPY8i7cyu5Cw-6UeZdYraTxrasKfHAPRo3xG7Zfuw_b0mRKaPaCQivUdTtDTpiMtSDaZAfV5M5JMFTB3UtV0FfH_OFEi0sTos-QAxBycXJZip7RANjOZrW87pK5wfEE1ZR_3x__bGOWh7Vwrvrio5fjNQM0e_bPxE8sICVHjoUgvuwPt27Vf2F-7yXpTSQcTPfjciGp10iI6nOpKAr9k54RubA3xsGl2V6Y6jGWojGs_iIt_Q"/>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-20 px-6 max-w-7xl mx-auto">
+<!-- Header Section -->
+<header class="mb-12">
+<h1 class="text-5xl md:text-6xl font-headline font-extrabold tracking-tight mb-4">Validator Panel</h1>
+<p class="text-on-surface-variant max-w-2xl leading-relaxed">
+        Resolve disputes and maintain network integrity. Your reputation score and stake weight determine the influence of your final verdicts.
+      </p>
+</header>
+<!-- Stats Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+<div class="md:col-span-1 bg-surface-container-low rounded-xl p-6 transition-all">
+<p class="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Active Stake</p>
+<div class="text-3xl font-headline font-bold text-primary">12,450 ALGO</div>
+</div>
+<div class="md:col-span-1 bg-surface-container-low rounded-xl p-6 transition-all">
+<p class="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Total Earnings</p>
+<div class="text-3xl font-headline font-bold text-on-surface">3,120 ALGO</div>
+</div>
+<div class="md:col-span-1 bg-surface-container-low rounded-xl p-6 transition-all">
+<p class="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Reputation Score</p>
+<div class="text-3xl font-headline font-bold text-tertiary">98.4%</div>
+</div>
+<div class="md:col-span-1 bg-surface-container-low rounded-xl p-6 transition-all">
+<p class="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Disputes Pending</p>
+<div class="text-3xl font-headline font-bold text-error">12 Cases</div>
+</div>
+</div>
+<!-- Active Disputes Section -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-3xl font-headline font-bold tracking-tight">Available Disputes</h2>
+<div class="flex space-x-2">
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-xs font-medium text-on-surface-variant">Filter: High Reward</span>
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-xs font-medium text-on-surface-variant">Sort: Expiry</span>
+</div>
+</div>
+<div class="space-y-6">
+<!-- Dispute Item 1 -->
+<div class="bg-surface-container-low rounded-xl p-8 hover:-translate-y-1 transition-all duration-300">
+<div class="flex flex-col lg:flex-row gap-8">
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-3">
+<span class="text-xs bg-error/10 text-error px-2 py-0.5 rounded font-bold uppercase tracking-tighter">Disputed</span>
+<span class="text-on-surface-variant text-xs font-medium">Bounty ID: SC-742-XP</span>
+</div>
+<h3 class="text-2xl font-headline font-bold mb-4">Neural Network Optimization for Supply Chains</h3>
+<p class="text-on-surface-variant mb-6 leading-relaxed">
+<strong class="text-on-surface">Reason:</strong> Submitter provided code that fails to meet the latency benchmarks specified in the technical brief. Sponsor claims code is plagiarized from public repositories.
+              </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-surface-container-high p-4 rounded-lg">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-sm text-primary">description</span>
+<span class="text-xs font-bold text-on-surface-variant uppercase">Original Brief Hash</span>
+</div>
+<code class="text-xs text-primary font-mono break-all opacity-80">0x7d2a...88b2e4f5a11c0993</code>
+</div>
+<div class="bg-surface-container-high p-4 rounded-lg">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-sm text-tertiary">upload_file</span>
+<span class="text-xs font-bold text-on-surface-variant uppercase">Submission Hash</span>
+</div>
+<code class="text-xs text-tertiary font-mono break-all opacity-80">0x3f9b...a122d76e4c19b442</code>
+</div>
+</div>
+</div>
+<!-- Voting Interface Column -->
+<div class="lg:w-80 bg-surface-container-high rounded-xl p-6 flex flex-col justify-between">
+<div>
+<p class="text-sm font-label text-on-surface-variant mb-4">Cast your Verdict</p>
+<div class="space-y-3 mb-6">
+<button class="w-full bg-surface-container-highest hover:bg-primary/20 hover:text-primary py-3 rounded-lg font-bold text-sm transition-all group flex items-center justify-between px-4">
+<span>Approve Contributor</span>
+<span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">how_to_reg</span>
+</button>
+<button class="w-full bg-surface-container-highest hover:bg-error/20 hover:text-error py-3 rounded-lg font-bold text-sm transition-all group flex items-center justify-between px-4">
+<span>Approve Sponsor</span>
+<span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">gavel</span>
+</button>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/10">
+<div class="flex justify-between text-xs mb-1">
+<span class="text-on-surface-variant">Validator Weight</span>
+<span class="text-on-surface">2.4x</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Est. Payout</span>
+<span class="text-primary font-bold">140 ALGO</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Dispute Item 2 -->
+<div class="bg-surface-container-low rounded-xl p-8 hover:-translate-y-1 transition-all duration-300 opacity-80 hover:opacity-100">
+<div class="flex flex-col lg:flex-row gap-8">
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-3">
+<span class="text-xs bg-tertiary/10 text-tertiary px-2 py-0.5 rounded font-bold uppercase tracking-tighter">Under Review</span>
+<span class="text-on-surface-variant text-xs font-medium">Bounty ID: SC-901-LL</span>
+</div>
+<h3 class="text-2xl font-headline font-bold mb-4">Cross-Chain Bridge Security Audit</h3>
+<p class="text-on-surface-variant mb-6 leading-relaxed">
+<strong class="text-on-surface">Reason:</strong> Contributor delivered audit report but Sponsor refuses payment claiming the report lacks depth on critical re-entrancy attack vectors.
+              </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-surface-container-high p-4 rounded-lg">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-sm text-primary">description</span>
+<span class="text-xs font-bold text-on-surface-variant uppercase">Original Brief Hash</span>
+</div>
+<code class="text-xs text-primary font-mono break-all opacity-80">0xae44...22f1c8900a88321d</code>
+</div>
+<div class="bg-surface-container-high p-4 rounded-lg">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-sm text-tertiary">upload_file</span>
+<span class="text-xs font-bold text-on-surface-variant uppercase">Submission Hash</span>
+</div>
+<code class="text-xs text-tertiary font-mono break-all opacity-80">0x88c2...11d0a55e4b21998c</code>
+</div>
+</div>
+</div>
+<div class="lg:w-80 bg-surface-container-high rounded-xl p-6 flex flex-col justify-between">
+<div>
+<p class="text-sm font-label text-on-surface-variant mb-4">Cast your Verdict</p>
+<div class="space-y-3 mb-6">
+<button class="w-full bg-surface-container-highest hover:bg-primary/20 hover:text-primary py-3 rounded-lg font-bold text-sm transition-all group flex items-center justify-between px-4">
+<span>Approve Contributor</span>
+<span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">how_to_reg</span>
+</button>
+<button class="w-full bg-surface-container-highest hover:bg-error/20 hover:text-error py-3 rounded-lg font-bold text-sm transition-all group flex items-center justify-between px-4">
+<span>Approve Sponsor</span>
+<span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">gavel</span>
+</button>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/10">
+<div class="flex justify-between text-xs mb-1">
+<span class="text-on-surface-variant">Validator Weight</span>
+<span class="text-on-surface">2.4x</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Est. Payout</span>
+<span class="text-primary font-bold">285 ALGO</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Voting History Table -->
+<section>
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-3xl font-headline font-bold tracking-tight">Recent Activity</h2>
+</div>
+<div class="overflow-hidden bg-surface-container-low rounded-xl">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high">
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Date</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Dispute Case</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Your Verdict</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest text-right">Reward</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-5 text-sm text-on-surface-variant">Oct 24, 2024</td>
+<td class="px-6 py-5">
+<div class="font-bold text-on-surface">Decentralized Storage API</div>
+<div class="text-xs text-on-surface-variant">SC-441-DD</div>
+</td>
+<td class="px-6 py-5">
+<span class="flex items-center gap-2 text-primary font-medium text-sm">
+<span class="material-symbols-outlined text-base">check_circle</span>
+                  Contributor Approved
+                </span>
+</td>
+<td class="px-6 py-5 text-right font-headline font-bold text-on-surface">+45.20 ALGO</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-5 text-sm text-on-surface-variant">Oct 21, 2024</td>
+<td class="px-6 py-5">
+<div class="font-bold text-on-surface">ZK-Proof Implementation</div>
+<div class="text-xs text-on-surface-variant">SC-112-ZK</div>
+</td>
+<td class="px-6 py-5">
+<span class="flex items-center gap-2 text-error font-medium text-sm">
+<span class="material-symbols-outlined text-base">gavel</span>
+                  Sponsor Approved
+                </span>
+</td>
+<td class="px-6 py-5 text-right font-headline font-bold text-on-surface">+112.00 ALGO</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-5 text-sm text-on-surface-variant">Oct 15, 2024</td>
+<td class="px-6 py-5">
+<div class="font-bold text-on-surface">Mobile Wallet UI/UX Kit</div>
+<div class="text-xs text-on-surface-variant">SC-889-UI</div>
+</td>
+<td class="px-6 py-5">
+<span class="flex items-center gap-2 text-primary font-medium text-sm">
+<span class="material-symbols-outlined text-base">check_circle</span>
+                  Contributor Approved
+                </span>
+</td>
+<td class="px-6 py-5 text-right font-headline font-bold text-on-surface">+25.50 ALGO</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<!-- BottomNavBar for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-neutral-900/80 backdrop-blur-lg shadow-[0_-4px_24px_rgba(0,209,255,0.08)] rounded-t-2xl">
+<div class="flex flex-col items-center justify-center text-neutral-500 font-label text-[10px] font-medium hover:text-cyan-300">
+<span class="material-symbols-outlined">home</span>
+      Home
+    </div>
+<div class="flex flex-col items-center justify-center bg-cyan-500/10 text-cyan-400 rounded-xl px-3 py-1 font-label text-[10px] font-medium">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+      Dash
+    </div>
+<div class="flex flex-col items-center justify-center text-neutral-500 font-label text-[10px] font-medium hover:text-cyan-300">
+<span class="material-symbols-outlined">receipt_long</span>
+      Log
+    </div>
+<div class="flex flex-col items-center justify-center text-neutral-500 font-label text-[10px] font-medium hover:text-cyan-300">
+<span class="material-symbols-outlined">gavel</span>
+      Admin
+    </div>
+</nav>
+<!-- Footer -->
+<footer class="bg-neutral-950 w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 mt-12 border-t border-outline-variant/5">
+<div class="text-lg font-bold text-neutral-200 font-headline">SettleChain</div>
+<div class="flex flex-wrap justify-center gap-8 text-neutral-500 font-body text-sm">
+<a class="hover:text-white transition-colors" href="#">Documentation</a>
+<a class="hover:text-white transition-colors" href="#">Privacy</a>
+<a class="hover:text-white transition-colors" href="#">Terms</a>
+<a class="hover:text-white transition-colors" href="#">TestNet Status</a>
+</div>
+<div class="text-neutral-500 font-body text-sm leading-relaxed">
+      © 2024 SettleChain. Built on Algorand.
+    </div>
+</footer>
+</body></html>

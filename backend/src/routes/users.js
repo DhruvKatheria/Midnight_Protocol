@@ -1,21 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { getUser, createUser, updateUser } = require("../services/firebase");
+const { getUser, createUser, updateUser } = require("../services/mongo");
 
 // GET /:address
 router.get("/:address", async (req, res) => {
   try {
     let user = await getUser(req.params.address);
     if (!user) {
-        // create if not exists
-        user = {
-            walletAddress: req.params.address,
-            role: "contributor",
-            trustScore: 50,
-            isStaked: false,
-            createdAt: new Date().toISOString()
-        };
-        await createUser(req.params.address, user);
+        return res.status(404).json({ error: "User not found by wallet address" });
     }
     res.json({ success: true, user });
   } catch (error) {

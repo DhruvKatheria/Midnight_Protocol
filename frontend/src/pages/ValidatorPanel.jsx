@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { useWallet } from "../context/walletContext";
-import { Copy, SplitSquareHorizontal } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function ValidatorPanel() {
@@ -19,23 +18,23 @@ export default function ValidatorPanel() {
       const res = await api.get("/api/disputes/open");
       setDisputes(res.data || []);
     } catch(err) {
-       toast.error("Failed to load disputes.");
+      toast.error("Failed to load disputes.");
     } finally {
-       setLoading(false);
+      setLoading(false);
     }
   };
 
   const handleCopy = (text) => {
-      navigator.clipboard.writeText(text);
-      toast.success("Hash copied!", { icon: "📋" });
+    navigator.clipboard.writeText(text);
+    toast.success("Hash copied!", { icon: "📋" });
   };
 
   const handleVote = async (disputeId, approve) => {
     const t = toast.loading("Casting validator vote...");
     try {
       await api.post(`/api/disputes/${disputeId}/vote`, {
-         validatorAddress: address,
-         approve
+        validatorAddress: address,
+        approve
       });
       toast.success("Vote registered. Consensus updated.", { id: t });
       fetchDisputes();
@@ -44,90 +43,126 @@ export default function ValidatorPanel() {
     }
   };
 
-  if (!address) return <div className="p-10 text-center">Connect wallet.</div>;
+  if (!address) return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-on-surface-variant text-lg">Connect wallet.</p></div>;
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto pb-10">
-      
-      <div className="bg-gradient-to-r from-gold/20 to-gold/5 border border-gold rounded-xl p-6 flex justify-between items-center shadow-sm">
-         <div className="flex items-center gap-4">
-            <span className="text-4xl">⚖️</span>
-            <div>
-               <h2 className="text-xl font-bold text-brand mb-1">Validator Node Active</h2>
-               <p className="text-slate-600 text-sm font-medium">You are staked — eligible for dispute selection and governance.</p>
-            </div>
-         </div>
-         <div className="text-right border-l pl-4 border-gold/30">
-             <p className="text-xs uppercase font-bold text-gold opacity-80 tracking-wider">Stake Amount</p>
-             <p className="text-2xl font-bold text-brand">10 ALGO</p>
-         </div>
+    <div className="px-6 max-w-7xl mx-auto animate-fade-in pb-10">
+      {/* Header */}
+      <header className="mb-12 pt-4">
+        <h1 className="text-5xl md:text-6xl font-headline font-extrabold tracking-tight mb-4">Validator Panel</h1>
+        <p className="text-on-surface-variant max-w-2xl leading-relaxed">
+          Resolve disputes and maintain network integrity. Your reputation score and stake weight determine the influence of your final verdicts.
+        </p>
+      </header>
+
+      {/* Stats Bento Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div className="bg-surface-container-low rounded-xl p-6">
+          <p className="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Active Stake</p>
+          <div className="text-3xl font-headline font-bold text-primary">12,450 ALGO</div>
+        </div>
+        <div className="bg-surface-container-low rounded-xl p-6">
+          <p className="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Total Earnings</p>
+          <div className="text-3xl font-headline font-bold text-on-surface">3,120 ALGO</div>
+        </div>
+        <div className="bg-surface-container-low rounded-xl p-6">
+          <p className="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Reputation Score</p>
+          <div className="text-3xl font-headline font-bold text-tertiary">98.4%</div>
+        </div>
+        <div className="bg-surface-container-low rounded-xl p-6">
+          <p className="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Disputes Pending</p>
+          <div className="text-3xl font-headline font-bold text-error">{disputes.length} Cases</div>
+        </div>
       </div>
 
-      <h3 className="text-2xl font-bold flex items-center gap-2"><SplitSquareHorizontal className="text-slate-400"/> Dispute Queue / Diff Review</h3>
+      {/* Disputes Section */}
+      <section className="mb-16">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-headline font-bold tracking-tight">Available Disputes</h2>
+        </div>
 
-      {loading ? (
-        <div className="animate-pulse bg-slate-200 h-64 rounded-xl"></div>
-      ) : disputes.length === 0 ? (
-        <div className="bg-white p-10 text-center text-slate-500 rounded-xl shadow-sm">Your queue is empty.</div>
-      ) : (
-        disputes.map(disp => {
-           const hasVoted = disp.voterAddresses && disp.voterAddresses.includes(address);
+        {loading ? (
+          <div className="animate-pulse bg-surface-container-low h-64 rounded-xl"></div>
+        ) : disputes.length === 0 ? (
+          <div className="bg-surface-container-low p-10 text-center text-on-surface-variant rounded-xl">Your queue is empty.</div>
+        ) : (
+          <div className="space-y-6">
+            {disputes.map(disp => {
+              const hasVoted = disp.voterAddresses && disp.voterAddresses.includes(address);
 
-           return (
-             <div key={disp.id} className="bg-white border-x border-b border-t-4 border-t-red-500 rounded-b-xl rounded-t-sm shadow-sm overflow-hidden mb-8">
-                <div className="p-6 bg-red-50/30 border-b border-slate-100 flex justify-between items-center">
-                   <div>
-                       <h4 className="font-bold text-brand flex items-center gap-2">Dispute #{disp.id.substring(0,8)} <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs">DISPUTED</span></h4>
-                       <p className="text-sm text-red-600 font-medium mt-1">Reason: "{disp.reason}"</p>
-                   </div>
-                   <div className="text-right">
-                       <p className="text-xs font-bold text-slate-400 uppercase">Current Votes</p>
-                       <p className="text-sm font-bold"><span className="text-green-600">{disp.votes.approve} Appr</span> / <span className="text-red-600">{disp.votes.reject} Rej</span></p>
-                   </div>
-                </div>
-
-                {/* Diff View Simulator */}
-                <div className="grid md:grid-cols-2 divide-x divide-slate-100 bg-slate-900 text-slate-300">
-                   <div className="p-6 space-y-3 relative group">
-                      <h5 className="font-bold text-xs uppercase text-slate-500 tracking-wider flex items-center gap-2">
-                        Original Brief <span className="w-2 h-2 rounded-full bg-red-400"></span>
-                      </h5>
-                      <div className="bg-black/50 p-4 rounded text-sm font-mono border border-slate-800 min-h-[100px] leading-relaxed">
-                         <span className="text-red-400 bg-red-400/10 px-1">-</span> {disp.originalBrief || "Loading Brief payload..."}
+              return (
+                <div key={disp.id} className="bg-surface-container-low rounded-xl p-8 hover:-translate-y-1 transition-all duration-300">
+                  <div className="flex flex-col lg:flex-row gap-8">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-xs bg-error/10 text-error px-2 py-0.5 rounded font-bold uppercase tracking-tighter">Disputed</span>
+                        <span className="text-on-surface-variant text-xs font-medium">Dispute #{disp.id?.substring(0,8)}</span>
                       </div>
-                   </div>
-                   <div className="p-6 space-y-3 relative group">
-                      <h5 className="font-bold text-xs uppercase text-slate-500 tracking-wider flex justify-between">
-                         <span className="flex items-center gap-2">Submitted Work / Evidence <span className="w-2 h-2 rounded-full bg-green-400"></span></span>
-                         <span className="flex items-center gap-1 font-mono text-[10px] text-slate-600 hover:text-white transition cursor-pointer" onClick={()=>handleCopy(disp.submissionHash)}>
-                            Hash {disp.submissionHash?.substring(0,8)}... <Copy size={12}/>
-                         </span>
-                      </h5>
-                      <div className="bg-black/50 p-4 rounded text-sm font-mono border border-slate-800 min-h-[100px] leading-relaxed flex items-center justify-between">
-                         <span><span className="text-green-400 bg-green-400/10 px-1">+</span> [IPFS Content Resolving...]</span>
-                         <a href={`https://ipfs.io/ipfs/${disp.submissionHash}`} target="_blank" rel="noreferrer" className="text-teal underline font-bold px-3 py-1 bg-teal/10 rounded">Inspect CID</a>
+                      <h3 className="text-2xl font-headline font-bold mb-4">{disp.bountyTitle || "Dispute Case"}</h3>
+                      <p className="text-on-surface-variant mb-6 leading-relaxed">
+                        <strong className="text-on-surface">Reason:</strong> "{disp.reason}"
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div className="bg-surface-container-high p-4 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="material-symbols-outlined text-sm text-primary">description</span>
+                            <span className="text-xs font-bold text-on-surface-variant uppercase">Original Brief Hash</span>
+                          </div>
+                          <code className="text-xs text-primary font-mono break-all opacity-80 cursor-pointer" onClick={() => handleCopy(disp.originalBrief || '')}>
+                            {disp.originalBrief?.substring(0, 24) || "Loading..."}...
+                          </code>
+                        </div>
+                        <div className="bg-surface-container-high p-4 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="material-symbols-outlined text-sm text-tertiary">upload_file</span>
+                            <span className="text-xs font-bold text-on-surface-variant uppercase">Submission Hash</span>
+                          </div>
+                          <code className="text-xs text-tertiary font-mono break-all opacity-80 cursor-pointer" onClick={() => handleCopy(disp.submissionHash || '')}>
+                            {disp.submissionHash?.substring(0, 24) || "Loading..."}...
+                          </code>
+                        </div>
                       </div>
-                   </div>
-                </div>
+                    </div>
 
-                <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-4">
-                   {hasVoted ? (
-                      <span className="text-slate-500 font-bold px-4 py-2 border rounded-md">✅ You have voted</span>
-                   ) : (
-                      <>
-                        <button onClick={() => handleVote(disp.id, false)} className="px-6 py-2 bg-white text-red-600 font-bold border border-red-200 rounded hover:bg-red-50 transition shadow-sm">
-                           Reject Work (Refund Sponsor)
-                        </button>
-                        <button onClick={() => handleVote(disp.id, true)} className="px-6 py-2 bg-green-600 text-white font-bold rounded hover:bg-green-700 transition shadow-sm">
-                           Approve Work (Pay Contributor)
-                        </button>
-                      </>
-                   )}
+                    {/* Voting Interface */}
+                    <div className="lg:w-80 bg-surface-container-high rounded-xl p-6 flex flex-col justify-between">
+                      {hasVoted ? (
+                        <div className="text-center py-8">
+                          <span className="material-symbols-outlined text-4xl text-primary mb-2">how_to_vote</span>
+                          <p className="font-bold text-on-surface">Vote Submitted</p>
+                          <p className="text-xs text-on-surface-variant mt-1">Your verdict has been recorded</p>
+                        </div>
+                      ) : (
+                        <>
+                          <div>
+                            <p className="text-sm font-label text-on-surface-variant mb-4">Cast your Verdict</p>
+                            <div className="space-y-3 mb-6">
+                              <button onClick={() => handleVote(disp.id, true)} className="w-full bg-surface-container-highest hover:bg-primary/20 hover:text-primary py-3 rounded-lg font-bold text-sm transition-all group flex items-center justify-between px-4">
+                                <span>Approve Contributor</span>
+                                <span className="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">how_to_reg</span>
+                              </button>
+                              <button onClick={() => handleVote(disp.id, false)} className="w-full bg-surface-container-highest hover:bg-error/20 hover:text-error py-3 rounded-lg font-bold text-sm transition-all group flex items-center justify-between px-4">
+                                <span>Approve Sponsor</span>
+                                <span className="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">gavel</span>
+                              </button>
+                            </div>
+                          </div>
+                          <div className="pt-4 border-t border-outline-variant/10">
+                            <div className="flex justify-between text-xs mb-1">
+                              <span className="text-on-surface-variant">Current Votes</span>
+                              <span className="text-on-surface"><span className="text-primary">{disp.votes?.approve || 0} Appr</span> / <span className="text-error">{disp.votes?.reject || 0} Rej</span></span>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
-             </div>
-           )
-        })
-      )}
+              );
+            })}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

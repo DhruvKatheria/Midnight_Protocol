@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const { buildAppCallTxn } = require("../services/algorand");
-const { createDispute, getDispute, updateDispute, updateBounty, createTransaction } = require("../services/firebase");
+const { createDispute, getDispute, updateDispute, updateBounty, createTransaction, getAllOpenDisputes, getDisputesByBounty } = require("../services/mongo");
 const { updateTrustScore } = require("../services/trustScore");
-const { getAllUsers } = require("../services/firebase"); 
+const { getAllUsers } = require("../services/mongo"); 
 
 // POST /:bountyId/raise
 router.post("/:bountyId/raise", async (req, res) => {
@@ -12,18 +12,17 @@ router.post("/:bountyId/raise", async (req, res) => {
     const { bountyId } = req.params;
     const { sponsorAddress, reason } = req.body;
     
-    let validatorsAccs = ["VAL1", "VAL2", "VAL3"]; 
-    try {
-        const users = await getAllUsers();
-        const staked = users.filter(u => u.isStaked === true && u.role === "validator");
-        const shuffled = staked.sort(() => 0.5 - Math.random());
-        validatorsAccs = shuffled.slice(0, 3).map(v => v.walletAddress);
-        if (validatorsAccs.length < 3) throw new Error("Not enough staked validators");
-    } catch(e) {
-        console.warn("Using mock validators:", e.message);
-    }
+    let validatorsAccs = ["VAL1", "VAL2", "VAL3"]; // Removed strict DB validator constraint
+    // Always use these placeholders for now
 
-    const appCallTxn = await buildAppCallTxn(sponsorAddress, "dispute", validatorsAccs);
+    const { getBounty } = require("../services/mongo");
+    const bountyObj = await getBounty(bountyId);
+    
+    const isDemoAddress = sponsorAddress && sponsorAddress.startsWith("DEMO_");
+    
+    if (!isDemoAddress && (!bountyObj || !bountyObj.appId)) throw new Error("Bounty missing appId");
+    
+    const appCallTxn = await buildAppCallTxn(sponsorAddress, "dispute", validatorsAccs, bountyObj.appId);
     const disputeId = uuidv4();
     
     await createDispute({
@@ -40,6 +39,11 @@ router.post("/:bountyId/raise", async (req, res) => {
     });
 
     await updateBounty(bountyId, { status: "disputed" });
+    const { getSubmissionsByBounty, updateSubmission } = require("../services/mongo");
+    const subs = await getSubmissionsByBounty(bountyId);
+    for (let s of subs) {
+        await updateSubmission(s.id, { status: "disputed" });
+    }
     
     await createTransaction({
         id: uuidv4(),
@@ -106,6 +110,13 @@ router.post("/:disputeId/vote", async (req, res) => {
         await updateDispute(disputeId, { status: "resolved", outcome: isApprovedByMajority ? "approved" : "rejected" });
         await updateBounty(dispute.bountyId, { status: isApprovedByMajority ? "approved" : "refunded" });
         
+        // Cascade to submissions
+        const { getSubmissionsByBounty, updateSubmission } = require("../services/mongo");
+        const subs = await getSubmissionsByBounty(dispute.bountyId);
+        for (let s of subs) {
+             await updateSubmission(s.id, { status: isApprovedByMajority ? "approved" : "rejected" });
+        }
+        
         await createTransaction({
             id: uuidv4(),
             bountyId: dispute.bountyId,
@@ -151,19 +162,18 @@ router.post("/:disputeId/vote", async (req, res) => {
 // GET /open
 router.get("/open", async (req, res) => {
   try {
-    // Basic mock / fetch all and filter
-    const disputes = [
-      {
-          id: "mock_disp_123",
-          bountyId: "mock_bounty_789",
-          reason: "The Logo did not match the brief instructions.",
-          originalBrief: "A beautiful pixel art logo of an eagle.",
-          submissionHash: "QmHashMock123456",
-          votes: { approve: 0, reject: 1 },
-          voterAddresses: []
-      }
-    ]; 
-    res.json(disputes);
+    const disputes = await getAllOpenDisputes();
+    res.json(disputes || []);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /bounty/:bountyId
+router.get("/bounty/:bountyId", async (req, res) => {
+  try {
+    const disputes = await getDisputesByBounty(req.params.bountyId);
+    res.json({ success: true, disputes: disputes || [] });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -3,8 +3,8 @@ const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const algosdk = require("algosdk");
 const { hashBrief } = require("../services/hashing");
-const { buildAppCallTxn, buildPayTxn, submitSignedTxn } = require("../services/algorand");
-const { createBounty, getBounty, updateBounty, getAllBounties, createTransaction } = require("../services/firebase");
+const { buildAppCallTxn, buildPayTxn, submitSignedTxn, deployBountyContract } = require("../services/algorand");
+const { createBounty, getBounty, updateBounty, getAllBounties, createTransaction } = require("../services/mongo");
 const { updateTrustScore } = require("../services/trustScore");
 
 // POST /create
@@ -12,22 +12,41 @@ router.post("/create", async (req, res) => {
   try {
     const { title, description, reward, deadline, sponsorAddress } = req.body;
     const briefHash = hashBrief(description);
+    const isDemoAddress = sponsorAddress && sponsorAddress.startsWith("DEMO_");
     
-    // Dynamically calculate app address to prevent module caching race conditions
-    const APP_ID = parseInt(process.env.APP_ID || "0");
-    const APP_ADDRESS = APP_ID !== 0 ? algosdk.getApplicationAddress(APP_ID) : "MOCK_APP_ADDRESS";
+    if (isDemoAddress) {
+      // Skip blockchain for demo addresses
+      res.json({
+        success: true,
+        briefHash,
+        unsignedAppCallTxn: null,
+        unsignedPayTxn: null
+      });
+      return;
+    }
+    
+    let APP_ID, APP_ADDRESS;
+    if (!isDemoAddress) {
+      const deployed = await deployBountyContract();
+      APP_ID = deployed.appId;
+      APP_ADDRESS = deployed.appAddress;
+    } else {
+      APP_ID = 0;
+      APP_ADDRESS = "MOCK_APP_ADDRESS";
+    }
 
-    let appCallTxn = await buildAppCallTxn(sponsorAddress, "lock", [briefHash, deadline]);
+    let appCallTxn = await buildAppCallTxn(sponsorAddress, "lock", [briefHash, deadline], APP_ID);
     let payTxn = await buildPayTxn(sponsorAddress, APP_ADDRESS, reward);
     
-    // Group the transactions atomically
-    algosdk.assignGroupID([appCallTxn, payTxn]);
+    // Group the transactions atomically — payTxn MUST be Gtxn[0] (contract asserts Gtxn[0] is Payment)
+    algosdk.assignGroupID([payTxn, appCallTxn]);
     
     res.json({
       success: true,
       briefHash,
-      unsignedAppCallTxn: Buffer.from(appCallTxn.toByte()).toString('base64'),
-      unsignedPayTxn: Buffer.from(payTxn.toByte()).toString('base64')
+      appId: APP_ID,
+      unsignedPayTxn: Buffer.from(payTxn.toByte()).toString('base64'),
+      unsignedAppCallTxn: Buffer.from(appCallTxn.toByte()).toString('base64')
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -38,12 +57,10 @@ router.post("/create", async (req, res) => {
 router.post("/confirm", async (req, res) => {
   try {
     const { signedGroupTxnBase64, bountyData } = req.body;
-    let txId = "mock_tx_confirm";
-    try {
-       txId = await submitSignedTxn(signedGroupTxnBase64);
-    } catch(e) {
-       console.warn("Algorand connection not set up properly, continuing with mock txId :", e.message);
-    }
+    
+    // Submit the signed transaction group to the Algorand blockchain
+    const txId = await submitSignedTxn(signedGroupTxnBase64);
+    console.log("✅ Blockchain transaction confirmed:", txId);
     
     const bountyId = uuidv4();
     const newBounty = {
@@ -56,7 +73,7 @@ router.post("/confirm", async (req, res) => {
         deadline: bountyData.deadline,
         status: "open",
         txId,
-        appId: process.env.APP_ID,
+        appId: bountyData.appId,
         createdAt: new Date().toISOString()
     };
     
@@ -116,28 +133,37 @@ router.get("/:id", async (req, res) => {
 router.post("/:id/approve", async (req, res) => {
   try {
     const bounty = await getBounty(req.params.id);
-    const { sponsorAddress, contributorAddress, mockSignedSubmit = false } = req.body; // Mock boolean allows testing bypasses
+    const { sponsorAddress, contributorAddress, mockSignedSubmit = false } = req.body;
+    const isDemoAddress = sponsorAddress && sponsorAddress.startsWith("DEMO_");
     
     if (bounty.status !== "submitted") {
         return res.status(400).json({ error: "Bounty must be in submitted status" });
     }
     
-    const appCallTxn = await buildAppCallTxn(sponsorAddress, "approve", []);
+    let unsignedTxnBase64 = null;
+    if (!isDemoAddress) {
+      const appCallTxn = await buildAppCallTxn(sponsorAddress, "approve", [], bounty.appId);
+      unsignedTxnBase64 = Buffer.from(appCallTxn.toByte()).toString('base64');
+    }
     
-    if (mockSignedSubmit) {
+    if (mockSignedSubmit || isDemoAddress) {
          await updateBounty(bounty.id, { status: "approved" });
          
-         // 3. TRUST SCORE INTEGRATION
+         // Cascade status properly to submissions
+         const { getSubmissionsByBounty, updateSubmission } = require("../services/mongo");
+         const subs = await getSubmissionsByBounty(bounty.id);
+         for (let s of subs) {
+             await updateSubmission(s.id, { status: "approved" });
+         }
+
          await updateTrustScore(contributorAddress, 10, "bounty_completed");
          await updateTrustScore(sponsorAddress, 5, "bounty_settled");
-         
-         // 4. TRANSACTION LOGGING
          await createTransaction({
              id: uuidv4(),
              bountyId: bounty.id,
              action: "submission_approved",
              actor: sponsorAddress,
-             txId: "mock_approval_txid",
+             txId: isDemoAddress ? "demo_approval_txid" : "mock_approval_txid",
              amount: bounty.amount,
              timestamp: new Date().toISOString()
          });
@@ -146,7 +172,7 @@ router.post("/:id/approve", async (req, res) => {
     res.json({
         success: true,
         message: "Sign this transaction to approve",
-        unsignedAppCallTxn: Buffer.from(appCallTxn.toByte()).toString('base64')
+        unsignedAppCallTxn: unsignedTxnBase64
     });
     
   } catch (error) {

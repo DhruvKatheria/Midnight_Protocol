@@ -49,8 +49,8 @@ const CreateBountyForm = ({ onSuccess }) => {
       if (peraWallet) {
         console.log("✅ Pera Wallet detected - sending transactions for signature...");
         
-        // Let walletContext bridge the base64 signatures
-        const signedGroupTxnBase64 = await signAndSend([unsignedAppCallTxn, unsignedPayTxn]);
+        // Let walletContext bridge the base64 signatures (payTxn first — contract requires Gtxn[0] = Payment)
+        const signedGroupTxnBase64 = await signAndSend([unsignedPayTxn, unsignedAppCallTxn]);
 
         if (!signedGroupTxnBase64) {
           throw new Error("Signing failed or user rejected.");

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-on-surface": "#565554",
+              "primary-container": "#00cffc",
+              "tertiary-container": "#7696fd",
+              "secondary-fixed-dim": "#d6d4d3",
+              "on-surface-variant": "#adaaaa",
+              "on-error-container": "#ffa8a3",
+              "secondary-fixed": "#e5e2e1",
+              "secondary-dim": "#d6d4d3",
+              "primary-fixed": "#00cffc",
+              "tertiary-fixed-dim": "#819fff",
+              "tertiary": "#89a5ff",
+              "outline": "#777575",
+              "error": "#ff716c",
+              "error-container": "#9f0519",
+              "surface-container-highest": "#262626",
+              "on-secondary-fixed": "#403f3f",
+              "tertiary-fixed": "#95adff",
+              "inverse-primary": "#006880",
+              "surface-container": "#1a1919",
+              "error-dim": "#d7383b",
+              "on-primary-fixed": "#002a35",
+              "on-background": "#ffffff",
+              "surface-variant": "#262626",
+              "on-tertiary-fixed": "#001345",
+              "background": "#0e0e0e",
+              "on-primary": "#004a5d",
+              "on-tertiary": "#00236d",
+              "surface-container-high": "#201f1f",
+              "surface-container-lowest": "#000000",
+              "surface-dim": "#0e0e0e",
+              "surface-tint": "#69daff",
+              "on-secondary-container": "#d2d0cf",
+              "surface": "#0e0e0e",
+              "primary-dim": "#00c0ea",
+              "tertiary-dim": "#7999ff",
+              "outline-variant": "#494847",
+              "on-secondary-fixed-variant": "#5c5b5b",
+              "primary": "#69daff",
+              "on-primary-container": "#004050",
+              "on-surface": "#ffffff",
+              "secondary-container": "#474746",
+              "primary-fixed-dim": "#00c0ea",
+              "surface-bright": "#2c2c2c",
+              "on-primary-fixed-variant": "#004a5c",
+              "on-tertiary-fixed-variant": "#00318e",
+              "inverse-surface": "#fcf8f8",
+              "surface-container-low": "#131313",
+              "secondary": "#e5e2e1",
+              "on-tertiary-container": "#001851",
+              "on-error": "#490006",
+              "on-secondary": "#525151"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-nav {
+        background: rgba(14, 14, 14, 0.7);
+        backdrop-filter: blur(20px);
+      }
+      body {
+        background-color: #0e0e0e;
+        color: #ffffff;
+      }
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .no-scrollbar::-webkit-scrollbar {
+          display: none;
+      }
+    </style>
+</head>
+<body class="font-body selection:bg-primary/30">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-neutral-900/70 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+<div class="flex justify-between items-center px-6 py-4 max-w-full mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-cyan-400 font-headline">SettleChain</span>
+<div class="hidden md:flex gap-6">
+<a class="text-neutral-400 font-medium hover:text-neutral-200 transition-all duration-200" href="#">Dashboard</a>
+<a class="text-neutral-400 font-medium hover:text-neutral-200 transition-all duration-200" href="#">Validator</a>
+<a class="text-cyan-400 font-bold border-b-2 border-cyan-400 pb-1 transition-all duration-200" href="#">Log</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-5 py-2 bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-bold rounded-lg active:scale-95 transition-all text-sm">
+                    Connect Wallet
+                </button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img alt="User Wallet Avatar" class="w-full h-full object-cover" data-alt="abstract geometric identicon representing a blockchain wallet address with cyan and obsidian tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhdAIQkDnTf0MiJd9UICQiFWxt_RVKQjwmEj-39sIRKfdCcS3RZVF_BYXNXKnDuJFbhFCB7rwWsmAp_hGNUY3Q_yBnReVRIU8gA0Ax_XOhFB4huofIkmbdn6F25EfpDHqABtUPLINGTNgTCl5xBgywHCf8DrD_Db6Ue7QEv2CUMezUuU5IZ7JFH7tPP3LT9DxXywPtGAG8XPFh6BY3vfNZ1_kDA7XhLYt57iX5IHc1vc5eJuRbv20wE2nV5SFihikZDHwgJNlACCo"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="pt-28 pb-32 px-6 max-w-7xl mx-auto">
+<!-- Header & Stats Section -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+<div class="space-y-2">
+<h1 class="text-5xl font-headline font-extrabold tracking-tight text-on-surface">Transaction Log</h1>
+<p class="text-on-surface-variant text-lg max-w-xl">Real-time immutable ledger of all bounty settlements and validator actions on SettleChain.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container-low p-6 rounded-xl min-w-[160px]">
+<span class="text-xs font-label uppercase tracking-widest text-on-surface-variant">24h Volume</span>
+<div class="text-2xl font-headline font-bold text-primary mt-1">42.8k ALGO</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl min-w-[160px]">
+<span class="text-xs font-label uppercase tracking-widest text-on-surface-variant">TPS Avg</span>
+<div class="text-2xl font-headline font-bold text-tertiary mt-1">1,240</div>
+</div>
+</div>
+</header>
+<!-- Filters Section -->
+<section class="mb-8 flex flex-col md:flex-row gap-4 items-center">
+<div class="relative w-full md:w-96 group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/15 focus:ring-2 focus:ring-primary/50 rounded-xl py-3 pl-12 pr-4 text-on-surface placeholder:text-neutral-600 transition-all" placeholder="Search Bounty ID or Wallet Address..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto">
+<button class="px-4 py-2 bg-surface-container-highest text-on-surface text-sm font-medium rounded-lg hover:bg-white/5 transition-colors whitespace-nowrap">All Actions</button>
+<button class="px-4 py-2 bg-surface-container-low text-on-surface-variant text-sm font-medium rounded-lg hover:text-on-surface transition-colors whitespace-nowrap">Lock</button>
+<button class="px-4 py-2 bg-surface-container-low text-on-surface-variant text-sm font-medium rounded-lg hover:text-on-surface transition-colors whitespace-nowrap">Submit</button>
+<button class="px-4 py-2 bg-surface-container-low text-on-surface-variant text-sm font-medium rounded-lg hover:text-on-surface transition-colors whitespace-nowrap">Approve</button>
+<button class="px-4 py-2 bg-surface-container-low text-on-surface-variant text-sm font-medium rounded-lg hover:text-on-surface transition-colors whitespace-nowrap">Dispute</button>
+</div>
+</section>
+<!-- Table Ledger -->
+<div class="bg-surface-container-low rounded-2xl overflow-hidden shadow-2xl">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50 text-on-surface-variant text-xs uppercase tracking-widest font-label">
+<th class="px-6 py-5">Bounty ID</th>
+<th class="px-6 py-5">Action</th>
+<th class="px-6 py-5">Transaction Hash</th>
+<th class="px-6 py-5 text-right">Timestamp</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<!-- Row 1 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-6">
+<span class="font-headline font-bold text-on-surface">#BTN-8821</span>
+</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-primary/10 text-primary uppercase">Release</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex items-center gap-2 font-mono text-on-surface-variant group-hover:text-primary transition-colors">
+<span>Z7X2...K9P1</span>
+<button class="p-1 hover:bg-primary/10 rounded group/icon">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<span class="text-on-surface-variant text-sm">2 mins ago</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-6">
+<span class="font-headline font-bold text-on-surface">#BTN-7440</span>
+</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-error-container/20 text-error uppercase">Dispute</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex items-center gap-2 font-mono text-on-surface-variant group-hover:text-primary transition-colors">
+<span>A1B9...M4Q2</span>
+<button class="p-1 hover:bg-primary/10 rounded group/icon">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<span class="text-on-surface-variant text-sm">14 mins ago</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-6">
+<span class="font-headline font-bold text-on-surface">#BTN-9102</span>
+</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-tertiary/10 text-tertiary uppercase">Approve</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex items-center gap-2 font-mono text-on-surface-variant group-hover:text-primary transition-colors">
+<span>R5T8...L2N6</span>
+<button class="p-1 hover:bg-primary/10 rounded group/icon">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<span class="text-on-surface-variant text-sm">42 mins ago</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-6">
+<span class="font-headline font-bold text-on-surface">#BTN-8821</span>
+</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-surface-container-highest text-on-surface-variant uppercase">Submit</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex items-center gap-2 font-mono text-on-surface-variant group-hover:text-primary transition-colors">
+<span>X9C4...W3B7</span>
+<button class="p-1 hover:bg-primary/10 rounded group/icon">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<span class="text-on-surface-variant text-sm">1 hour ago</span>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-6">
+<span class="font-headline font-bold text-on-surface">#BTN-6601</span>
+</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-primary/10 text-primary uppercase">Lock</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex items-center gap-2 font-mono text-on-surface-variant group-hover:text-primary transition-colors">
+<span>F2D1...J0V9</span>
+<button class="p-1 hover:bg-primary/10 rounded group/icon">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<span class="text-on-surface-variant text-sm">3 hours ago</span>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-6">
+<span class="font-headline font-bold text-on-surface">#BTN-4523</span>
+</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-tertiary/10 text-tertiary uppercase">Vote</span>
+</td>
+<td class="px-6 py-6">
+<div class="flex items-center gap-2 font-mono text-on-surface-variant group-hover:text-primary transition-colors">
+<span>M9K3...H7X4</span>
+<button class="p-1 hover:bg-primary/10 rounded group/icon">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-6 text-right">
+<span class="text-on-surface-variant text-sm">5 hours ago</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-6 bg-surface-container-high/30 flex justify-between items-center border-t border-outline-variant/5">
+<span class="text-sm text-on-surface-variant">Showing <span class="text-on-surface font-medium">1-10</span> of <span class="text-on-surface font-medium">1,240</span> transactions</span>
+<div class="flex gap-2">
+<button class="p-2 bg-surface-container-highest hover:bg-white/5 rounded-lg text-on-surface disabled:opacity-50 transition-all" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 bg-surface-container-highest hover:bg-white/5 rounded-lg text-on-surface transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- System Status Floating Panel -->
+<aside class="mt-12 p-8 bg-gradient-to-br from-surface-container-low to-surface-container-lowest rounded-2xl ring-1 ring-outline-variant/10 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl" data-weight="fill">verified_user</span>
+</div>
+<div>
+<h3 class="text-xl font-headline font-bold text-on-surface">Settlement Finality Guaranteed</h3>
+<p class="text-on-surface-variant">All transactions logged are anchored on the Algorand mainnet for 0.0s instant finality.</p>
+</div>
+</div>
+<a class="px-6 py-3 bg-surface-container-highest text-on-surface font-bold rounded-lg hover:bg-white/5 transition-all text-sm whitespace-nowrap" href="#">
+                Verify on Algosharing
+            </a>
+</aside>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-neutral-900/80 backdrop-blur-lg shadow-[0_-4px_24px_rgba(0,209,255,0.08)] rounded-t-2xl">
+<button class="flex flex-col items-center justify-center text-neutral-500 hover:text-cyan-300">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label text-[10px] font-medium">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-neutral-500 hover:text-cyan-300">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label text-[10px] font-medium">Dash</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-cyan-500/10 text-cyan-400 rounded-xl px-3 py-1">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label text-[10px] font-medium">Log</span>
+</button>
+<button class="flex flex-col items-center justify-center text-neutral-500 hover:text-cyan-300">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label text-[10px] font-medium">Admin</span>
+</button>
+</nav>
+<!-- Footer -->
+<footer class="w-full py-12 px-8 bg-neutral-950">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
+<div class="space-y-2">
+<span class="text-lg font-bold text-neutral-200 block">SettleChain</span>
+<p class="text-neutral-500 font-body text-sm leading-relaxed">© 2024 SettleChain. Built on Algorand.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-neutral-500 font-body text-sm hover:text-white transition-colors" href="#">Documentation</a>
+<a class="text-neutral-500 font-body text-sm hover:text-white transition-colors" href="#">Privacy</a>
+<a class="text-neutral-500 font-body text-sm hover:text-white transition-colors" href="#">Terms</a>
+<a class="text-cyan-400 font-body text-sm transition-colors" href="#">TestNet Status</a>
+</div>
+</div>
+</footer>
+</body></html>

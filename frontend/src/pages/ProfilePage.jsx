@@ -1,100 +1,150 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { useWallet } from "../context/walletContext";
+import toast from "react-hot-toast";
 
 export default function ProfilePage() {
-  const { address, role } = useWallet();
+  const { address, disconnectWallet } = useWallet();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (address) {
-      fetchProfile();
-    }
+    if (address) fetchProfile();
   }, [address]);
 
   const fetchProfile = async () => {
     try {
+      setLoading(true);
       const res = await api.get(`/api/users/${address}`);
       setProfile(res.data);
-    } catch(err) {
-      console.error(err);
+    } catch (err) {
+      // may not exist yet
+      setProfile(null);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!address) return <div className="p-10 text-center">Please connect wrapper.</div>;
-  if (loading || !profile) return <div className="p-10 animate-pulse bg-slate-200 h-64 rounded-xl max-w-3xl mx-auto"></div>;
-
-  // Gauge calculation (0-200 mapping for UI visual scale)
-  const score = profile.trustScore || 0;
-  const percentage = Math.min((score / 200) * 100, 100);
+  if (!address) {
+    return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-on-surface-variant text-lg">Please connect your wallet.</p></div>;
+  }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-10">
-      
-      <div className="grid md:grid-cols-3 gap-8">
-         {/* Trust Gauge Card */}
-         <div className="md:col-span-1 bg-brand text-white p-8 rounded-2xl shadow-lg flex flex-col items-center justify-center relative overflow-hidden">
-             
-             {/* Decorative background circle */}
-             <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent rounded-full opacity-50 blur-2xl"></div>
+    <div className="px-6 max-w-4xl mx-auto animate-fade-in pb-10">
+      <header className="mb-12 pt-4">
+        <h1 className="text-5xl font-headline font-extrabold tracking-tighter mb-4">
+          My <span className="gradient-text">Profile</span>
+        </h1>
+        <p className="text-on-surface-variant text-lg">Your on-chain identity on the SettleChain network.</p>
+      </header>
 
-             <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-6 relative z-10">Trust Score</h2>
-             
-             {/* Simple static SVG Gauge approximation */}
-             <div className="relative w-40 h-40 flex items-center justify-center z-10">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <path className="text-accent" strokeDasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
-                  <path className="text-teal" strokeDasharray={`${percentage}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                </svg>
-                <div className="absolute flex flex-col items-center">
-                   <span className="text-4xl font-extrabold">{score}</span>
-                   <span className="text-xs text-slate-400 mt-1 uppercase">/ 200</span>
-                </div>
-             </div>
-
-             <div className="mt-8 text-center relative z-10">
-                 <div className="bg-white/10 px-4 py-2 rounded-full inline-block backdrop-blur-sm">
-                   <span className="text-xs font-bold font-mono">ASSET: TRUST Token balances map to this.</span>
-                 </div>
-             </div>
-         </div>
-
-         {/* Info & Badges */}
-         <div className="md:col-span-2 space-y-6">
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-center h-full">
-               <div className="mb-2 uppercase text-xs font-bold text-slate-400">Wallet Identity</div>
-               <div className="font-mono text-lg text-brand break-all bg-slate-50 p-3 rounded border border-slate-100 mb-6">
-                  {address}
-               </div>
-
-               <div className="mb-2 uppercase text-xs font-bold text-slate-400">Current Role</div>
-               <div className="inline-block bg-gold/20 text-gold font-extrabold uppercase px-4 py-2 rounded mb-8 text-sm max-w-fit">
-                  {role || 'Contributor'}
-               </div>
-
-               <div className="mb-3 uppercase text-xs font-bold text-slate-400">Reputation Badges</div>
-               <div className="flex flex-wrap gap-3">
-                  <span className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-bold rounded shadow-sm">
-                     🌟 First Bounty Completed
-                  </span>
-                  {score > 80 && (
-                    <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-teal text-white text-xs font-bold rounded shadow-sm">
-                       🤝 Fair Sponsor
-                    </span>
-                  )}
-                  {profile.isStaked && (
-                    <span className="px-4 py-2 bg-gradient-to-r from-gold to-yellow-500 text-white text-xs font-bold rounded shadow-sm">
-                       ⚖️ Honest Validator
-                    </span>
-                  )}
-               </div>
+      {loading ? (
+        <div className="animate-pulse bg-surface-container-low h-64 rounded-2xl"></div>
+      ) : (
+        <div className="space-y-8">
+          {/* Identity Card */}
+          <div className="bg-surface-container-low p-8 rounded-2xl relative overflow-hidden">
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 blur-[80px] rounded-full"></div>
+            <div className="flex items-center gap-6 mb-8 relative z-10">
+              <div className="w-20 h-20 rounded-full bg-surface-container-highest border-2 border-primary/30 flex items-center justify-center">
+                <span className="text-3xl font-headline font-extrabold text-primary">
+                  {profile?.role?.[0]?.toUpperCase() || "U"}
+                </span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-headline font-bold">{profile?.name || "SettleChain User"}</h2>
+                <p className="text-sm font-mono text-on-surface-variant mt-1 break-all">{address}</p>
+                <span className="inline-flex items-center gap-1 mt-2 px-3 py-1 bg-tertiary/10 text-tertiary rounded-full text-xs font-bold uppercase tracking-wider">
+                  <span className="material-symbols-outlined text-xs">badge</span>
+                  {profile?.role || "Contributor"}
+                </span>
+              </div>
             </div>
-         </div>
-      </div>
 
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
+              <div className="bg-surface-container p-5 rounded-xl text-center">
+                <p className="text-3xl font-headline font-bold text-primary">{profile?.bountiesCreated || 0}</p>
+                <p className="text-xs text-on-surface-variant mt-1 uppercase tracking-widest">Bounties</p>
+              </div>
+              <div className="bg-surface-container p-5 rounded-xl text-center">
+                <p className="text-3xl font-headline font-bold text-on-surface">{profile?.submissionsCount || 0}</p>
+                <p className="text-xs text-on-surface-variant mt-1 uppercase tracking-widest">Submissions</p>
+              </div>
+              <div className="bg-surface-container p-5 rounded-xl text-center">
+                <p className="text-3xl font-headline font-bold text-tertiary">{profile?.disputesResolved || 0}</p>
+                <p className="text-xs text-on-surface-variant mt-1 uppercase tracking-widest">Disputes</p>
+              </div>
+              <div className="bg-surface-container p-5 rounded-xl text-center">
+                <p className="text-3xl font-headline font-bold text-primary">{profile?.algoEarned || 0}</p>
+                <p className="text-xs text-on-surface-variant mt-1 uppercase tracking-widest">ALGO Earned</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Trust Score */}
+          <div className="bg-surface-container-low p-8 rounded-2xl">
+            <h3 className="text-xl font-headline font-bold mb-6">Trust Score</h3>
+            <div className="flex items-center gap-8">
+              <div className="relative w-32 h-32">
+                <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#262626" strokeWidth="8" />
+                  <circle
+                    cx="50" cy="50" r="40" fill="none" stroke="#69daff" strokeWidth="8"
+                    strokeDasharray={`${(profile?.trustScore || 75) * 2.51} 999`}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-2xl font-headline font-bold text-primary">{profile?.trustScore || 75}%</span>
+                </div>
+              </div>
+              <div className="flex-1 space-y-3">
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-on-surface-variant">On-Time Delivery</span>
+                    <span className="text-on-surface font-medium">92%</span>
+                  </div>
+                  <div className="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full" style={{ width: '92%' }}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-on-surface-variant">Quality Score</span>
+                    <span className="text-on-surface font-medium">88%</span>
+                  </div>
+                  <div className="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                    <div className="h-full bg-tertiary rounded-full" style={{ width: '88%' }}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-on-surface-variant">Dispute Rate</span>
+                    <span className="text-on-surface font-medium">3%</span>
+                  </div>
+                  <div className="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                    <div className="h-full bg-error rounded-full" style={{ width: '3%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-4">
+            <button
+              onClick={disconnectWallet}
+              className="flex-1 bg-surface-container-high text-on-surface font-bold py-4 rounded-xl hover:bg-error/10 hover:text-error transition-colors"
+            >
+              Disconnect Wallet
+            </button>
+            <button className="flex-1 bg-surface-container-highest text-on-surface font-bold py-4 rounded-xl hover:bg-surface-bright transition-colors">
+              Export Data
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
