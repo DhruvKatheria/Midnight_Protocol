@@ -1,0 +1,16 @@
+{
+  "collectionName": "submissions",
+  "schema": {
+    "id": { "type": "string", "description": "Unique submission ID" },
+    "bountyId": { "type": "string", "description": "Associated bounty ID" },
+    "contributorUid": { "type": "string", "description": "UID of contributor" },
+    "content": { "type": "string", "description": "Submission content" },
+    "ipfsHash": { "type": "string", "description": "IPFS hash of submission" },
+    "status": { "type": "string", "enum": ["pending", "approved", "rejected", "disputed"], "description": "Submission status" },
+    "score": { "type": "number", "description": "Quality score" },
+    "feedback": { "type": "string", "description": "Reviewer feedback" },
+    "contentHash": { "type": "string", "description": "SHA-256 hash of submission content" },
+    "createdAt": { "type": "timestamp", "description": "Submission timestamp" },
+    "updatedAt": { "type": "timestamp", "description": "Last update timestamp" }
+  }
+}

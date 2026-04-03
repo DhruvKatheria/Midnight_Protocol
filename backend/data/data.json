@@ -1,0 +1,534 @@
+{
+  "bounties": {
+    "30ce1d50-82d2-4bf9-8f34-57b39c41e159": {
+      "id": "30ce1d50-82d2-4bf9-8f34-57b39c41e159",
+      "title": "Landing Page",
+      "description": "Build SaaS UI",
+      "amount": 1000000,
+      "deadline": "2026-04-10",
+      "status": "open",
+      "sponsorUid": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "sponsorWallet": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "contentHash": "e183cc45d0a4b0eb22f12a3e5d6a922fd13af08722c4b9d0d42c85b12742bc4f",
+      "transactionHash": "manual_30ce1d50-82d2-4bf9-8f34-57b39c41e159",
+      "submissions": [],
+      "selectedWinner": null,
+      "createdAt": "2026-04-02T17:47:43.241Z",
+      "updatedAt": "2026-04-02T17:47:43.241Z"
+    },
+    "cca72c0a-d70c-4ccb-9f89-23a833fee747": {
+      "id": "cca72c0a-d70c-4ccb-9f89-23a833fee747",
+      "title": "Landing Page",
+      "description": "Build SaaS UI",
+      "amount": 1000000,
+      "deadline": "2026-04-10",
+      "status": "open",
+      "sponsorUid": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "sponsorWallet": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "contentHash": "e183cc45d0a4b0eb22f12a3e5d6a922fd13af08722c4b9d0d42c85b12742bc4f",
+      "transactionHash": "manual_cca72c0a-d70c-4ccb-9f89-23a833fee747",
+      "submissions": [],
+      "selectedWinner": null,
+      "createdAt": "2026-04-02T17:48:56.252Z",
+      "updatedAt": "2026-04-02T17:48:56.252Z"
+    },
+    "5c0ff15b-3bc2-4fc4-849e-f8eeb559d5cd": {
+      "id": "5c0ff15b-3bc2-4fc4-849e-f8eeb559d5cd",
+      "sponsorAddress": "SPONSOR_MOCK",
+      "title": "Design Landing Page",
+      "description": "Looking for an expert to design a Vite landing page.",
+      "briefHash": "mock_hash_12345",
+      "amount": 50,
+      "deadline": 1775758729,
+      "status": "open",
+      "txId": "mock_tx_id",
+      "appId": "758146675",
+      "createdAt": "2026-04-02T18:18:49.567Z",
+      "updatedAt": "2026-04-02T18:18:49.567Z"
+    },
+    "dfec5408-9e2b-4d73-b31d-6d37e252e27c": {
+      "id": "dfec5408-9e2b-4d73-b31d-6d37e252e27c",
+      "sponsorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "title": "second",
+      "description": "not specific",
+      "briefHash": "81229fb75e4543dc03a2569d7e43a90d4a4a2496f785a53a473abc15331bbe0f",
+      "amount": 5,
+      "deadline": 1775158380,
+      "status": "approved",
+      "txId": "mock_tx_confirm",
+      "appId": "758146675",
+      "createdAt": "2026-04-02T19:33:29.199Z",
+      "updatedAt": "2026-04-02T19:37:21.020Z"
+    },
+    "61a0bcf6-f05e-4c81-96e7-d637620dedb6": {
+      "id": "61a0bcf6-f05e-4c81-96e7-d637620dedb6",
+      "sponsorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "title": "tftc",
+      "description": "yfrfyh",
+      "briefHash": "9f68b281e8da4c3be15bac71c73b998b18c283c708b6c0574b30be8fe2c01cdd",
+      "amount": 3,
+      "deadline": 1775158440,
+      "status": "approved",
+      "txId": "mock_tx_confirm",
+      "appId": "758146675",
+      "createdAt": "2026-04-02T19:34:39.624Z",
+      "updatedAt": "2026-04-02T19:36:05.649Z"
+    },
+    "994ea142-5a47-439c-ab94-6cdf473a0727": {
+      "id": "994ea142-5a47-439c-ab94-6cdf473a0727",
+      "sponsorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "title": "hululu",
+      "description": "blehhh",
+      "briefHash": "b0e8bc731291929a32da42a8097c7c51aa595608d596b9666bb1fbe2009617da",
+      "amount": 1,
+      "deadline": 1775165400,
+      "status": "disputed",
+      "txId": "mock_tx_confirm",
+      "appId": "758146675",
+      "createdAt": "2026-04-02T20:34:56.058Z",
+      "updatedAt": "2026-04-02T20:36:24.442Z"
+    },
+    "c889ee02-0e1d-4134-afe7-4daa8c1036dc": {
+      "id": "c889ee02-0e1d-4134-afe7-4daa8c1036dc",
+      "sponsorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "title": "hul",
+      "description": "iunuiom",
+      "briefHash": "41cb15dc706c80bc4bfcf96123cb4675341e8d1fe4bc249b2a994bc1ceca5fcb",
+      "amount": 900,
+      "deadline": 1785695340,
+      "status": "open",
+      "txId": "mock_tx_confirm",
+      "appId": "758146675",
+      "createdAt": "2026-04-02T22:19:05.652Z",
+      "updatedAt": "2026-04-02T22:19:05.652Z"
+    },
+    "18b4318d-24cc-4b59-9d2f-f9f7b6caf61d": {
+      "id": "18b4318d-24cc-4b59-9d2f-f9f7b6caf61d",
+      "sponsorAddress": "DEMO_SPONSOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGHIJK",
+      "title": "liasnca",
+      "description": "zdbd",
+      "briefHash": "627e8aa4fdf13a7b4aef8193ce2cbc94ec5050f25f7fd39b2aad4ac71d4996ed",
+      "amount": 131,
+      "deadline": 1798655340,
+      "status": "submitted",
+      "txId": "mock_tx_confirm",
+      "appId": "758146675",
+      "createdAt": "2026-04-02T23:06:48.787Z",
+      "updatedAt": "2026-04-02T23:07:33.340Z"
+    },
+    "bce84b9a-4cd9-4a19-98ea-c981fab02d0c": {
+      "id": "bce84b9a-4cd9-4a19-98ea-c981fab02d0c",
+      "sponsorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "title": "dhairya",
+      "description": "roomie",
+      "briefHash": "3fdb3661b634e6093c9de980d813dc9207f2913e5dfae0089c00ee3c30a73eda",
+      "amount": 10,
+      "deadline": 1780684140,
+      "status": "disputed",
+      "txId": "mock_tx_confirm",
+      "appId": "758146675",
+      "createdAt": "2026-04-02T23:11:04.140Z",
+      "updatedAt": "2026-04-02T23:13:18.735Z"
+    },
+    "e98a98b6-a54a-4101-b1ea-5543678de9d2": {
+      "id": "e98a98b6-a54a-4101-b1ea-5543678de9d2",
+      "sponsorAddress": "DEMO_SPONSOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGHIJK",
+      "title": "smart contract",
+      "description": "dfkcj,dfb",
+      "briefHash": "3716a5f27c76d8a6d85355e4bda119ccfc7c4bfaad2ae04830305256f07e8757",
+      "amount": 200,
+      "deadline": 1775500140,
+      "status": "approved",
+      "txId": "mock_tx_confirm",
+      "appId": "758146675",
+      "createdAt": "2026-04-03T04:38:15.514Z",
+      "updatedAt": "2026-04-03T04:39:12.514Z"
+    }
+  },
+  "submissions": {
+    "a5fa4954-e5e5-4847-b30e-d279b3c0e0a6": {
+      "id": "a5fa4954-e5e5-4847-b30e-d279b3c0e0a6",
+      "bountyId": "61a0bcf6-f05e-4c81-96e7-d637620dedb6",
+      "contributorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "workUrl": null,
+      "workHash": "af93142a9f1afdd34e60f3baf9044b3a8c3ddd5021c106be4aa2867d6076ecef",
+      "commitmentHash": "af93142a9f1afdd34e60f3baf9044b3a8c3ddd5021c106be4aa2867d6076ecef",
+      "status": "pending",
+      "createdAt": "2026-04-02T19:35:37.884Z",
+      "updatedAt": "2026-04-02T19:35:37.886Z"
+    },
+    "28ec8c74-5187-401b-b162-6390e5f9db22": {
+      "id": "28ec8c74-5187-401b-b162-6390e5f9db22",
+      "bountyId": "dfec5408-9e2b-4d73-b31d-6d37e252e27c",
+      "contributorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "workUrl": "https://firebasestorage.googleapis.com/v0/b/mock/o/submission.txt?alt=media&hash=Qmac27348202bc9800cf70f0b4b721d5d63845615a8af7",
+      "workHash": "6d64a6a8e4e6085a35cfaa3957351029cf29b6e120d3dc6424cdbada421f45ea",
+      "commitmentHash": null,
+      "status": "pending",
+      "createdAt": "2026-04-02T19:36:54.400Z",
+      "updatedAt": "2026-04-02T19:36:54.400Z"
+    },
+    "6eb16f9b-841e-4e65-8fb8-45221b86510d": {
+      "id": "6eb16f9b-841e-4e65-8fb8-45221b86510d",
+      "bountyId": "994ea142-5a47-439c-ab94-6cdf473a0727",
+      "contributorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "workUrl": null,
+      "workHash": "cc34b8a00ef29eae72b97bdf5f5f4914ab23e90a3eb3ea84a907cfa426f00431",
+      "commitmentHash": "cc34b8a00ef29eae72b97bdf5f5f4914ab23e90a3eb3ea84a907cfa426f00431",
+      "status": "pending",
+      "createdAt": "2026-04-02T20:35:23.783Z",
+      "updatedAt": "2026-04-02T20:35:23.783Z"
+    },
+    "5227a03b-baab-42b4-ba37-c15647cc5c49": {
+      "id": "5227a03b-baab-42b4-ba37-c15647cc5c49",
+      "bountyId": "18b4318d-24cc-4b59-9d2f-f9f7b6caf61d",
+      "contributorAddress": "DEMO_CONTRIBUTOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEF",
+      "workUrl": "https://firebasestorage.googleapis.com/v0/b/mock/o/submission.txt?alt=media&hash=Qm2d615cd84fdb6cf4cfb991e92389d978fd336fff0e77",
+      "workHash": "5069e002b29bcd0056a6d75a28caa591263043f2395f96b8b7c9fa9abb317dd1",
+      "commitmentHash": null,
+      "status": "pending",
+      "createdAt": "2026-04-02T23:07:33.336Z",
+      "updatedAt": "2026-04-02T23:07:33.336Z"
+    },
+    "34581053-d228-42ba-af3b-27d3b8b0a8b7": {
+      "id": "34581053-d228-42ba-af3b-27d3b8b0a8b7",
+      "bountyId": "bce84b9a-4cd9-4a19-98ea-c981fab02d0c",
+      "contributorAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "workUrl": "https://firebasestorage.googleapis.com/v0/b/mock/o/submission.txt?alt=media&hash=Qm05c025bde9546dc3a74b281c80e690dbf71dd598f880",
+      "workHash": "d75ec408fb698f9913cd74063ea89749078bc6f680d7fddf42be97b74935ebcf",
+      "commitmentHash": null,
+      "status": "pending",
+      "createdAt": "2026-04-02T23:12:02.175Z",
+      "updatedAt": "2026-04-02T23:12:02.175Z"
+    },
+    "a68cb9be-6a99-440e-aae4-49ea9cc3bb3e": {
+      "id": "a68cb9be-6a99-440e-aae4-49ea9cc3bb3e",
+      "bountyId": "e98a98b6-a54a-4101-b1ea-5543678de9d2",
+      "contributorAddress": "DEMO_CONTRIBUTOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEF",
+      "workUrl": "https://firebasestorage.googleapis.com/v0/b/mock/o/submission.txt?alt=media&hash=Qm050fcd6493ec3189b3ec7434c1a4c09756610b782b34",
+      "workHash": "201b68ec31d3c1280494feced883c0ebbfb0b0948dd51a80d870d012d8791b3b",
+      "commitmentHash": null,
+      "status": "pending",
+      "createdAt": "2026-04-03T04:38:49.513Z",
+      "updatedAt": "2026-04-03T04:38:49.513Z"
+    }
+  },
+  "disputes": {
+    "885ac08a-fb81-4d62-a662-9530ec0e0ab9": {
+      "id": "885ac08a-fb81-4d62-a662-9530ec0e0ab9",
+      "bountyId": "994ea142-5a47-439c-ab94-6cdf473a0727",
+      "raisedBy": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "reason": "invalid work",
+      "validators": [
+        "VAL1",
+        "VAL2",
+        "VAL3"
+      ],
+      "votes": {
+        "approve": 0,
+        "reject": 0
+      },
+      "voterAddresses": [],
+      "voters": [],
+      "status": "open",
+      "createdAt": "2026-04-02T20:36:24.441Z",
+      "updatedAt": "2026-04-02T20:36:24.441Z"
+    },
+    "da769e95-1e19-4ee0-afb8-4a592683a9a9": {
+      "id": "da769e95-1e19-4ee0-afb8-4a592683a9a9",
+      "bountyId": "bce84b9a-4cd9-4a19-98ea-c981fab02d0c",
+      "raisedBy": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "reason": "blehhh",
+      "validators": [
+        "VAL1",
+        "VAL2",
+        "VAL3"
+      ],
+      "votes": {
+        "approve": 0,
+        "reject": 0
+      },
+      "voterAddresses": [],
+      "voters": [],
+      "status": "open",
+      "createdAt": "2026-04-02T23:13:18.731Z",
+      "updatedAt": "2026-04-02T23:13:18.731Z"
+    }
+  },
+  "transactions": {
+    "ca1902a1-8a0a-46a2-9418-8d881f2b8652": {
+      "id": "ca1902a1-8a0a-46a2-9418-8d881f2b8652",
+      "bountyId": "dfec5408-9e2b-4d73-b31d-6d37e252e27c",
+      "action": "bounty_created",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_tx_confirm",
+      "amount": 5,
+      "timestamp": "2026-04-02T19:33:29.199Z",
+      "createdAt": "2026-04-02T19:33:29.212Z",
+      "updatedAt": "2026-04-02T19:33:29.212Z"
+    },
+    "aa6ac608-e714-4cfb-8bc8-cb39d04b808c": {
+      "id": "aa6ac608-e714-4cfb-8bc8-cb39d04b808c",
+      "bountyId": "61a0bcf6-f05e-4c81-96e7-d637620dedb6",
+      "action": "bounty_created",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_tx_confirm",
+      "amount": 3,
+      "timestamp": "2026-04-02T19:34:39.624Z",
+      "createdAt": "2026-04-02T19:34:39.632Z",
+      "updatedAt": "2026-04-02T19:34:39.632Z"
+    },
+    "9cc38e73-d5a0-4e8f-888f-4a31c0dfa343": {
+      "id": "9cc38e73-d5a0-4e8f-888f-4a31c0dfa343",
+      "bountyId": "61a0bcf6-f05e-4c81-96e7-d637620dedb6",
+      "action": "work_submitted",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_submit_txid",
+      "amount": 0,
+      "timestamp": "2026-04-02T19:35:37.897Z",
+      "createdAt": "2026-04-02T19:35:37.899Z",
+      "updatedAt": "2026-04-02T19:35:37.899Z"
+    },
+    "9e9d361b-cbde-4853-84b3-8ce75416cb69": {
+      "id": "9e9d361b-cbde-4853-84b3-8ce75416cb69",
+      "bountyId": "61a0bcf6-f05e-4c81-96e7-d637620dedb6",
+      "action": "submission_approved",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_approval_txid",
+      "amount": 3,
+      "timestamp": "2026-04-02T19:36:05.676Z",
+      "createdAt": "2026-04-02T19:36:05.676Z",
+      "updatedAt": "2026-04-02T19:36:05.676Z"
+    },
+    "e9b37c81-00f8-4f21-b275-b51fea7068ac": {
+      "id": "e9b37c81-00f8-4f21-b275-b51fea7068ac",
+      "bountyId": "dfec5408-9e2b-4d73-b31d-6d37e252e27c",
+      "action": "work_submitted",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_submit_txid",
+      "amount": 0,
+      "timestamp": "2026-04-02T19:36:54.409Z",
+      "createdAt": "2026-04-02T19:36:54.409Z",
+      "updatedAt": "2026-04-02T19:36:54.409Z"
+    },
+    "62c44b6f-dfe6-45ca-9fb4-4b025328384e": {
+      "id": "62c44b6f-dfe6-45ca-9fb4-4b025328384e",
+      "bountyId": "dfec5408-9e2b-4d73-b31d-6d37e252e27c",
+      "action": "submission_approved",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_approval_txid",
+      "amount": 5,
+      "timestamp": "2026-04-02T19:37:21.041Z",
+      "createdAt": "2026-04-02T19:37:21.041Z",
+      "updatedAt": "2026-04-02T19:37:21.041Z"
+    },
+    "6c73f040-d68a-4500-af1e-92962032955e": {
+      "id": "6c73f040-d68a-4500-af1e-92962032955e",
+      "bountyId": "994ea142-5a47-439c-ab94-6cdf473a0727",
+      "action": "bounty_created",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_tx_confirm",
+      "amount": 1,
+      "timestamp": "2026-04-02T20:34:56.058Z",
+      "createdAt": "2026-04-02T20:34:56.061Z",
+      "updatedAt": "2026-04-02T20:34:56.061Z"
+    },
+    "be5bfac4-2213-432f-a1a1-232e6d9c1865": {
+      "id": "be5bfac4-2213-432f-a1a1-232e6d9c1865",
+      "bountyId": "994ea142-5a47-439c-ab94-6cdf473a0727",
+      "action": "work_submitted",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_submit_txid",
+      "amount": 0,
+      "timestamp": "2026-04-02T20:35:23.787Z",
+      "createdAt": "2026-04-02T20:35:23.787Z",
+      "updatedAt": "2026-04-02T20:35:23.787Z"
+    },
+    "88d07a38-00d8-47df-83ad-31054345da29": {
+      "id": "88d07a38-00d8-47df-83ad-31054345da29",
+      "bountyId": "994ea142-5a47-439c-ab94-6cdf473a0727",
+      "action": "dispute_raised",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_dispute_txid",
+      "amount": 0,
+      "timestamp": "2026-04-02T20:36:24.443Z",
+      "createdAt": "2026-04-02T20:36:24.443Z",
+      "updatedAt": "2026-04-02T20:36:24.443Z"
+    },
+    "3c20e2f9-9be6-47e8-8057-8c05c56e7644": {
+      "id": "3c20e2f9-9be6-47e8-8057-8c05c56e7644",
+      "bountyId": "c889ee02-0e1d-4134-afe7-4daa8c1036dc",
+      "action": "bounty_created",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_tx_confirm",
+      "amount": 900,
+      "timestamp": "2026-04-02T22:19:05.652Z",
+      "createdAt": "2026-04-02T22:19:05.655Z",
+      "updatedAt": "2026-04-02T22:19:05.655Z"
+    },
+    "fe126530-6dc1-4c02-b4c0-3694077c1979": {
+      "id": "fe126530-6dc1-4c02-b4c0-3694077c1979",
+      "bountyId": "18b4318d-24cc-4b59-9d2f-f9f7b6caf61d",
+      "action": "bounty_created",
+      "actor": "DEMO_SPONSOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGHIJK",
+      "txId": "mock_tx_confirm",
+      "amount": 131,
+      "timestamp": "2026-04-02T23:06:48.787Z",
+      "createdAt": "2026-04-02T23:06:48.789Z",
+      "updatedAt": "2026-04-02T23:06:48.790Z"
+    },
+    "477b24f7-b404-4204-a397-517e0e0b6e5f": {
+      "id": "477b24f7-b404-4204-a397-517e0e0b6e5f",
+      "bountyId": "18b4318d-24cc-4b59-9d2f-f9f7b6caf61d",
+      "action": "work_submitted",
+      "actor": "DEMO_CONTRIBUTOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEF",
+      "txId": "demo_submit_txid",
+      "amount": 0,
+      "timestamp": "2026-04-02T23:07:33.345Z",
+      "createdAt": "2026-04-02T23:07:33.345Z",
+      "updatedAt": "2026-04-02T23:07:33.345Z"
+    },
+    "45162509-7239-4dbe-ba3e-f6240579850b": {
+      "id": "45162509-7239-4dbe-ba3e-f6240579850b",
+      "bountyId": "bce84b9a-4cd9-4a19-98ea-c981fab02d0c",
+      "action": "bounty_created",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_tx_confirm",
+      "amount": 10,
+      "timestamp": "2026-04-02T23:11:04.140Z",
+      "createdAt": "2026-04-02T23:11:04.142Z",
+      "updatedAt": "2026-04-02T23:11:04.142Z"
+    },
+    "bb0c237c-0de1-4915-b904-73b1d71cb99b": {
+      "id": "bb0c237c-0de1-4915-b904-73b1d71cb99b",
+      "bountyId": "bce84b9a-4cd9-4a19-98ea-c981fab02d0c",
+      "action": "work_submitted",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_submit_txid",
+      "amount": 0,
+      "timestamp": "2026-04-02T23:12:02.180Z",
+      "createdAt": "2026-04-02T23:12:02.180Z",
+      "updatedAt": "2026-04-02T23:12:02.180Z"
+    },
+    "e7539d9f-bbc0-40e4-9038-ae1a887842b8": {
+      "id": "e7539d9f-bbc0-40e4-9038-ae1a887842b8",
+      "bountyId": "bce84b9a-4cd9-4a19-98ea-c981fab02d0c",
+      "action": "dispute_raised",
+      "actor": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "txId": "mock_dispute_txid",
+      "amount": 0,
+      "timestamp": "2026-04-02T23:13:18.740Z",
+      "createdAt": "2026-04-02T23:13:18.740Z",
+      "updatedAt": "2026-04-02T23:13:18.740Z"
+    },
+    "867e2700-e911-445e-aeb7-32e6fb16b162": {
+      "id": "867e2700-e911-445e-aeb7-32e6fb16b162",
+      "bountyId": "e98a98b6-a54a-4101-b1ea-5543678de9d2",
+      "action": "bounty_created",
+      "actor": "DEMO_SPONSOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGHIJK",
+      "txId": "mock_tx_confirm",
+      "amount": 200,
+      "timestamp": "2026-04-03T04:38:15.514Z",
+      "createdAt": "2026-04-03T04:38:15.517Z",
+      "updatedAt": "2026-04-03T04:38:15.517Z"
+    },
+    "560c0a9f-e10a-4727-9fe4-e360e2b2a3b4": {
+      "id": "560c0a9f-e10a-4727-9fe4-e360e2b2a3b4",
+      "bountyId": "e98a98b6-a54a-4101-b1ea-5543678de9d2",
+      "action": "work_submitted",
+      "actor": "DEMO_CONTRIBUTOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEF",
+      "txId": "demo_submit_txid",
+      "amount": 0,
+      "timestamp": "2026-04-03T04:38:49.517Z",
+      "createdAt": "2026-04-03T04:38:49.517Z",
+      "updatedAt": "2026-04-03T04:38:49.517Z"
+    },
+    "ee81e76f-9a54-413a-8694-3e86e692e0e1": {
+      "id": "ee81e76f-9a54-413a-8694-3e86e692e0e1",
+      "bountyId": "e98a98b6-a54a-4101-b1ea-5543678de9d2",
+      "action": "submission_approved",
+      "actor": "DEMO_SPONSOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGHIJK",
+      "txId": "demo_approval_txid",
+      "amount": 200,
+      "timestamp": "2026-04-03T04:39:12.518Z",
+      "createdAt": "2026-04-03T04:39:12.518Z",
+      "updatedAt": "2026-04-03T04:39:12.518Z"
+    }
+  },
+  "users": {
+    "SPONSOR_MOCK": {
+      "uid": "SPONSOR_MOCK",
+      "walletAddress": "SPONSOR_MOCK",
+      "role": "sponsor",
+      "trustScore": 80,
+      "isStaked": false,
+      "createdAt": "2026-04-02T18:18:49.556Z",
+      "updatedAt": "2026-04-02T18:18:49.556Z"
+    },
+    "CONTRIBUTOR_MOCK": {
+      "uid": "CONTRIBUTOR_MOCK",
+      "walletAddress": "CONTRIBUTOR_MOCK",
+      "role": "contributor",
+      "trustScore": 60,
+      "isStaked": false,
+      "createdAt": "2026-04-02T18:18:49.560Z",
+      "updatedAt": "2026-04-02T18:18:49.560Z"
+    },
+    "VAL1_MOCK": {
+      "uid": "VAL1_MOCK",
+      "walletAddress": "VAL1_MOCK",
+      "role": "validator",
+      "trustScore": 90,
+      "isStaked": true,
+      "stakeAmount": 10,
+      "createdAt": "2026-04-02T18:18:49.561Z",
+      "updatedAt": "2026-04-02T18:18:49.561Z"
+    },
+    "VAL2_MOCK": {
+      "uid": "VAL2_MOCK",
+      "walletAddress": "VAL2_MOCK",
+      "role": "validator",
+      "trustScore": 95,
+      "isStaked": true,
+      "stakeAmount": 10,
+      "createdAt": "2026-04-02T18:18:49.563Z",
+      "updatedAt": "2026-04-02T18:18:49.563Z"
+    },
+    "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE": {
+      "uid": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "walletAddress": "32P44FOGIROKA3ZGQTUSV7LNHLPNK3GPOOQ344V4PBBFP3OMTDJ7ZLXRTE",
+      "role": "contributor",
+      "trustScore": 60,
+      "isStaked": false,
+      "createdAt": "2026-04-02T18:52:27.995Z",
+      "updatedAt": "2026-04-02T19:37:21.029Z"
+    },
+    "DEMO_SPONSOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGHIJK": {
+      "uid": "DEMO_SPONSOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGHIJK",
+      "walletAddress": "DEMO_SPONSOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGHIJK",
+      "role": "contributor",
+      "trustScore": 55,
+      "isStaked": false,
+      "createdAt": "2026-04-02T22:07:07.021Z",
+      "updatedAt": "2026-04-03T04:39:12.516Z"
+    },
+    "DEMO_VALIDATOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGH": {
+      "uid": "DEMO_VALIDATOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGH",
+      "walletAddress": "DEMO_VALIDATOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEFGH",
+      "role": "contributor",
+      "trustScore": 50,
+      "isStaked": false,
+      "createdAt": "2026-04-02T22:12:06.787Z",
+      "updatedAt": "2026-04-02T22:12:06.787Z"
+    },
+    "DEMO_CONTRIBUTOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEF": {
+      "uid": "DEMO_CONTRIBUTOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEF",
+      "walletAddress": "DEMO_CONTRIBUTOR_ADDR_ALGO_SETTLECHAIN_TEST_1234567890ABCDEF",
+      "role": "contributor",
+      "trustScore": 50,
+      "isStaked": false,
+      "createdAt": "2026-04-02T22:55:38.141Z",
+      "updatedAt": "2026-04-02T22:55:38.141Z"
+    }
+  }
+}

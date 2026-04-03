@@ -1,0 +1,17 @@
+{
+  "collectionName": "users",
+  "schema": {
+    "uid": { "type": "string", "description": "Unique user ID from Firebase" },
+    "walletAddress": { "type": "string", "description": "Algorand wallet address" },
+    "email": { "type": "string", "description": "User email" },
+    "name": { "type": "string", "description": "User full name" },
+    "role": { "type": "string", "enum": ["sponsor", "contributor", "validator"], "description": "User role in the platform" },
+    "trustScore": { "type": "number", "description": "User trust score" },
+    "totalBountiesCreated": { "type": "number", "default": 0 },
+    "totalSubmissions": { "type": "number", "default": 0 },
+    "totalEarned": { "type": "number", "default": 0 },
+    "profileHash": { "type": "string", "description": "SHA-256 hash of profile data" },
+    "createdAt": { "type": "timestamp", "description": "Creation timestamp" },
+    "updatedAt": { "type": "timestamp", "description": "Last update timestamp" }
+  }
+}

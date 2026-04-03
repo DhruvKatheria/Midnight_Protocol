@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SettleChain | Decentralized Bounty Escrow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error": "#ff716c",
+                        "secondary": "#e5e2e1",
+                        "tertiary-fixed-dim": "#819fff",
+                        "on-tertiary-fixed-variant": "#00318e",
+                        "surface-container-high": "#201f1f",
+                        "on-secondary-container": "#d2d0cf",
+                        "primary-fixed": "#00cffc",
+                        "surface-dim": "#0e0e0e",
+                        "secondary-container": "#474746",
+                        "secondary-fixed-dim": "#d6d4d3",
+                        "secondary-dim": "#d6d4d3",
+                        "primary-container": "#00cffc",
+                        "tertiary-container": "#7696fd",
+                        "on-secondary-fixed": "#403f3f",
+                        "surface": "#0e0e0e",
+                        "on-primary-container": "#004050",
+                        "inverse-primary": "#006880",
+                        "inverse-on-surface": "#565554",
+                        "surface-tint": "#69daff",
+                        "surface-container-highest": "#262626",
+                        "primary-fixed-dim": "#00c0ea",
+                        "on-tertiary-fixed": "#001345",
+                        "surface-container-lowest": "#000000",
+                        "on-surface-variant": "#adaaaa",
+                        "on-tertiary": "#00236d",
+                        "on-surface": "#ffffff",
+                        "error-container": "#9f0519",
+                        "on-primary-fixed-variant": "#004a5c",
+                        "on-error-container": "#ffa8a3",
+                        "error-dim": "#d7383b",
+                        "on-error": "#490006",
+                        "surface-container-low": "#131313",
+                        "primary": "#69daff",
+                        "on-background": "#ffffff",
+                        "surface-bright": "#2c2c2c",
+                        "outline-variant": "#494847",
+                        "on-secondary": "#525151",
+                        "on-primary-fixed": "#002a35",
+                        "on-primary": "#004a5d",
+                        "primary-dim": "#00c0ea",
+                        "inverse-surface": "#fcf8f8",
+                        "surface-container": "#1a1919",
+                        "tertiary": "#89a5ff",
+                        "outline": "#777575",
+                        "tertiary-dim": "#7999ff",
+                        "background": "#0e0e0e",
+                        "on-secondary-fixed-variant": "#5c5b5b",
+                        "tertiary-fixed": "#95adff",
+                        "secondary-fixed": "#e5e2e1"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0e0e0e;
+        }
+        .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        .mesh-gradient {
+            background: radial-gradient(at 0% 0%, rgba(0, 164, 255, 0.15) 0px, transparent 50%),
+                        radial-gradient(at 100% 100%, rgba(137, 165, 255, 0.1) 0px, transparent 50%),
+                        radial-gradient(at 50% 50%, rgba(14, 14, 14, 1) 0px, transparent 100%);
+        }
+
+        .glass-card {
+            background: rgba(31, 31, 31, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .primary-gradient {
+            background: linear-gradient(135deg, #69daff 0%, #00cffc 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen mesh-gradient text-on-surface flex flex-col items-center">
+<!-- Header Section (Suppressed standard shell due to focused task flow) -->
+<header class="w-full max-w-7xl px-6 py-8 flex justify-between items-center z-20">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(105,218,255,0.3)]">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">hub</span>
+</div>
+<h1 class="text-2xl font-headline font-extrabold tracking-tighter text-on-surface">SettleChain</h1>
+</div>
+<div class="flex items-center gap-6">
+<a class="hidden md:flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-medium" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                Back to home
+            </a>
+<div class="flex items-center gap-4 bg-surface-container-low p-1 rounded-full">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">light_mode</span>
+</button>
+<button class="p-2 rounded-full bg-surface-container-highest text-primary shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dark_mode</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 w-full flex flex-col items-center justify-center px-4 py-8 z-10">
+<!-- Success Notification Mockup -->
+<div class="fixed top-8 right-8 z-50 flex items-center gap-4 bg-surface-container-high p-4 rounded-xl shadow-2xl border border-primary/20 animate-fade-in">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+<div>
+<p class="text-sm font-semibold">Algorand Node Connected</p>
+<p class="text-xs text-on-surface-variant">Mainnet-v1.0.4 active</p>
+</div>
+</div>
+<div class="w-full max-w-[480px] glass-card rounded-xl p-8 shadow-2xl relative overflow-hidden">
+<!-- Subtle accent glow -->
+<div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 blur-[80px] rounded-full"></div>
+<!-- Tab Switcher -->
+<div class="flex items-center gap-2 p-1.5 bg-surface-container-lowest rounded-xl mb-8 relative">
+<button class="flex-1 py-2.5 text-sm font-semibold rounded-lg bg-surface-container-highest text-on-surface transition-all duration-300">
+                    Login
+                </button>
+<button class="flex-1 py-2.5 text-sm font-semibold text-on-surface-variant hover:text-on-surface transition-all duration-300">
+                    Sign Up
+                </button>
+<button class="flex-1 py-2.5 text-sm font-semibold text-on-surface-variant hover:text-on-surface transition-all duration-300">
+                    Wallet
+                </button>
+</div>
+<!-- Content Area (Web3 Native Login focused) -->
+<div class="space-y-6">
+<div class="text-center mb-8">
+<h2 class="text-2xl font-headline font-bold text-on-surface">Connect Your Algorand Wallet</h2>
+<p class="text-on-surface-variant mt-2">No email required — web3 native login</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Pera Wallet -->
+<button class="group flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-xl hover:bg-surface-container-high hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(105,218,255,0.1)] border border-transparent hover:border-primary/30 transition-all duration-300">
+<div class="w-12 h-12 mb-3 rounded-lg flex items-center justify-center bg-[#000000]">
+<img alt="" class="w-10 h-10 object-contain" data-alt="Official logo of Pera Wallet for Algorand blockchain with a sleek dark minimalist aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAz90wWfRjgp31WN0nbZdw0cCt-tpzzRSlBglRl7asodxyGAIwvwpAPYVPRx3ySroJQWTKfJjmkEalzfzTOfOLziQ4ga6EtsuNv5q5nykfCRbq4otORX4TMBh9b2nC4S6OPhqXMScYA3mB9jMSWCYJ1pMkG98ksrXKYhHJvHdZweycCwNOD01Ht0Kz6QN9bYmJ9jLwJf_5sK4KxVXGsNNpK_7bn1VFCgWzQyLFlV140Q0R0N25FQPv0OTffdVvVlVQ_w0eFTkYqSM"/>
+</div>
+<span class="text-sm font-medium text-on-surface">Pera Wallet</span>
+</button>
+<!-- AlgoSigner -->
+<button class="group flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-xl hover:bg-surface-container-high hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(105,218,255,0.1)] border border-transparent hover:border-primary/30 transition-all duration-300">
+<div class="w-12 h-12 mb-3 rounded-lg flex items-center justify-center bg-[#000000]">
+<img alt="" class="w-10 h-10 object-contain" data-alt="Abstract minimalist icon representing AlgoSigner wallet browser extension for Algorand" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBU21YTgYJoaHax_wwrT_nIVhfF4UDU-4Zn8mGJhykxqE_esxqbSkQrM9qjSgUqDE74msI9H3NkUEeOCrvZYvupCSN9FfIv9JhOgWfRGuhwy-Ft7K54hvOJ6a2Bo5fNGgfWXhoRWMaSawK-5-1yGK47f8IXfMhIG_xyvWhQo8Ha1TCM2oEHlmxl-PxHi-9_nG1F_rZxkujP84u6unTSsAoUjY8tHtbp-5HVRRA5WR7jVAj06DXJwIwkp7hwB9hSifl-AbWKjxD58gc"/>
+</div>
+<span class="text-sm font-medium text-on-surface">AlgoSigner</span>
+</button>
+<!-- Defly Wallet -->
+<button class="group flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-xl hover:bg-surface-container-high hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(105,218,255,0.1)] border border-transparent hover:border-primary/30 transition-all duration-300">
+<div class="w-12 h-12 mb-3 rounded-lg flex items-center justify-center bg-[#000000]">
+<img alt="" class="w-10 h-10 object-contain" data-alt="The Defly wallet icon with a modern digital asset management aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWBca4mviQq1ImhNkHaTPeZoMdTfavs7KV3BQZ7BKWmDAzewn1UEi0C6mRwk-XRBtwN67wD6tZXkfcpa3oAvOxVI70Rcu_IJg_CtqO4Sa9qlg3eobKQl8qEsyMRgYAw2B6y6r9GIJunDIv7Dx9R-l_a_u1Ks-Fw70bpmfBIOIMoVmFjWJvMU9qvep6mIKd12W91sQXWtUURebKhOKq2kixULtaMpTz0lCZxdytYONHMPOmCDSLwCZnDXF__7VH1IDDPSPsWQhBmZg"/>
+</div>
+<span class="text-sm font-medium text-on-surface">Defly Wallet</span>
+</button>
+<!-- WalletConnect -->
+<button class="group flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-xl hover:bg-surface-container-high hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(105,218,255,0.1)] border border-transparent hover:border-primary/30 transition-all duration-300">
+<div class="w-12 h-12 mb-3 rounded-lg flex items-center justify-center bg-[#000000]">
+<span class="material-symbols-outlined text-primary text-4xl">account_balance_wallet</span>
+</div>
+<span class="text-sm font-medium text-on-surface">WalletConnect</span>
+</button>
+</div>
+<!-- Demo Mode Toggle -->
+<div class="pt-6 border-t border-outline-variant/10">
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary">bolt</span>
+<div>
+<p class="text-sm font-semibold">Demo Mode</p>
+<p class="text-xs text-on-surface-variant">Access with pre-filled test wallets</p>
+</div>
+</div>
+<button class="w-12 h-6 rounded-full bg-primary/20 p-1 flex items-center justify-end transition-all duration-300">
+<div class="w-4 h-4 rounded-full bg-primary shadow-lg shadow-primary/50"></div>
+</button>
+</div>
+<!-- Demo Profiles (Visible when Demo Mode ON) -->
+<div class="mt-4 grid grid-cols-1 gap-2">
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg hover:bg-surface-container-high cursor-pointer transition-colors border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-xs font-bold text-on-surface">S</div>
+<div>
+<p class="text-xs font-semibold">Sponsor Profile</p>
+<p class="text-[10px] text-on-surface-variant">0x...7b42</p>
+</div>
+</div>
+<span class="text-xs font-bold text-primary">1000 ALGO</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg hover:bg-surface-container-high cursor-pointer transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-xs font-bold text-on-tertiary-container">C</div>
+<div>
+<p class="text-xs font-semibold">Contributor Profile</p>
+<p class="text-[10px] text-on-surface-variant">0x...9e11</p>
+</div>
+</div>
+<span class="text-xs font-bold text-tertiary">50 ALGO</span>
+</div>
+</div>
+</div>
+<button class="w-full py-4 primary-gradient rounded-xl font-bold text-on-primary-container shadow-xl hover:scale-[0.98] active:opacity-80 transition-all duration-300 mt-2">
+                    Connect Selected Wallet
+                </button>
+</div>
+</div>
+<div class="mt-8 flex flex-col items-center gap-4">
+<p class="text-on-surface-variant text-sm flex items-center gap-2">
+                New to SettleChain? 
+                <a class="text-primary font-semibold hover:underline decoration-2 underline-offset-4" href="#">Learn about decentralized bounties</a>
+</p>
+</div>
+</main>
+<footer class="w-full py-12 px-8 z-10">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-primary">shield</span>
+<span class="text-sm font-medium">Smart contract escrow — no platform holds funds</span>
+</div>
+<p class="text-xs font-body text-on-surface-variant/60">
+                    © 2024 SettleChain. Securely built on Algorand.
+                </p>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-green-400 text-[18px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="text-xs font-medium">Built on Algorand — Carbon Negative</span>
+</div>
+<div class="flex items-center gap-4">
+<a class="text-on-surface-variant hover:text-primary transition-colors text-xs font-semibold" href="#">Status</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-xs font-semibold" href="#">Terms</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-xs font-semibold" href="#">Privacy</a>
+</div>
+</div>
+<!-- Demo Mode Badge -->
+<div class="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full border border-primary/20">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] font-bold text-primary tracking-widest uppercase">Demo Mode Active</span>
+</div>
+</div>
+</footer>
+<!-- Decorative background elements -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden">
+<div class="absolute top-[10%] left-[5%] w-96 h-96 bg-primary/5 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[10%] right-[5%] w-[500px] h-[500px] bg-tertiary/5 blur-[150px] rounded-full"></div>
+</div>
+</body></html>

@@ -1,0 +1,18 @@
+{
+  "collectionName": "transactions",
+  "schema": {
+    "id": { "type": "string", "description": "Unique transaction ID" },
+    "type": { "type": "string", "enum": ["bounty_creation", "payment", "refund", "escrow_release"], "description": "Transaction type" },
+    "fromUid": { "type": "string", "description": "Sender UID" },
+    "toUid": { "type": "string", "description": "Recipient UID" },
+    "amount": { "type": "number", "description": "Amount in ALGO" },
+    "bountyId": { "type": "string", "description": "Associated bounty ID" },
+    "submissionId": { "type": "string", "description": "Associated submission ID" },
+    "txnHash": { "type": "string", "description": "Algorand transaction hash" },
+    "status": { "type": "string", "enum": ["pending", "confirmed", "failed"], "description": "Transaction status" },
+    "confirmationBlock": { "type": "number", "description": "Block number of confirmation" },
+    "metadata": { "type": "object", "description": "Additional metadata" },
+    "createdAt": { "type": "timestamp", "description": "Transaction creation timestamp" },
+    "confirmedAt": { "type": "timestamp", "description": "Confirmation timestamp" }
+  }
+}
