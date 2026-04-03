@@ -1,0 +1,19 @@
+{
+  "collectionName": "bounties",
+  "schema": {
+    "id": { "type": "string", "description": "Unique bounty ID" },
+    "sponsorUid": { "type": "string", "description": "UID of bounty creator" },
+    "title": { "type": "string", "description": "Bounty title" },
+    "description": { "type": "string", "description": "Detailed description" },
+    "amount": { "type": "number", "description": "Bounty amount in ALGO" },
+    "deadline": { "type": "timestamp", "description": "Submission deadline" },
+    "status": { "type": "string", "enum": ["open", "in_review", "completed", "disputed", "cancelled"], "description": "Current status" },
+    "criteria": { "type": "array", "description": "Acceptance criteria" },
+    "submissions": { "type": "array", "description": "Array of submission IDs" },
+    "selectedWinner": { "type": "string", "description": "UID of selected winner" },
+    "contentHash": { "type": "string", "description": "SHA-256 hash of bounty content" },
+    "transactionId": { "type": "string", "description": "Algorand transaction ID" },
+    "createdAt": { "type": "timestamp", "description": "Creation timestamp" },
+    "updatedAt": { "type": "timestamp", "description": "Last update timestamp" }
+  }
+}
