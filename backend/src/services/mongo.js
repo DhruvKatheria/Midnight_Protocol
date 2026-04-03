@@ -20,7 +20,9 @@ async function createUser(uid, userData) {
 
 async function getUser(uid) {
   try {
-    return await User.findOne({ uid }).lean();
+    return await User.findOne({
+      $or: [{ uid }, { walletAddress: uid }, { email: uid }],
+    }).lean();
   } catch (err) {
     console.error("Error fetching user:", err);
     throw err;

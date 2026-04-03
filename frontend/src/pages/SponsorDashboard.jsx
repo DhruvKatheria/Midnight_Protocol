@@ -31,6 +31,16 @@ export default function SponsorDashboard() {
     }
   };
 
+  const getUserEmailByIdentity = async (identity) => {
+    if (!identity) return null;
+    try {
+      const res = await api.get(`/api/users/${identity}`);
+      return res.data?.user?.email || res.data?.email || null;
+    } catch (_) {
+      return null;
+    }
+  };
+
   const handleCreateBounty = async (e) => {
     e.preventDefault();
     if (!title || !description || !reward || !deadline) return toast.error("Fill all fields.");
@@ -75,12 +85,25 @@ export default function SponsorDashboard() {
     }
   };
 
-  const handleDispute = async (bountyId) => {
+  const handleDispute = async (bountyId, contributorAddress) => {
     const reason = prompt("Enter reason for dispute:");
     if (!reason) return;
     const t = toast.loading("Raising dispute...");
     try {
-      const res = await api.post(`/api/disputes/${bountyId}/raise`, { sponsorAddress: address, reason });
+      const sponsorEmailFromStorage = localStorage.getItem("userEmail");
+      const [sponsorEmail, contributorEmail] = await Promise.all([
+        sponsorEmailFromStorage ? Promise.resolve(sponsorEmailFromStorage) : getUserEmailByIdentity(address),
+        contributorAddress ? getUserEmailByIdentity(contributorAddress) : Promise.resolve(null),
+      ]);
+
+      const payload = {
+        sponsorAddress: address,
+        reason,
+        ...(sponsorEmail ? { sponsorEmail } : {}),
+        ...(contributorEmail ? { contributorEmail } : {}),
+      };
+
+      const res = await api.post(`/api/disputes/${bountyId}/raise`, payload);
       await signAndSend([res.data.unsignedAppCallTxn]);
       toast.success("Dispute raised. Validators assigned.", { id: t });
       fetchMyBounties();
@@ -190,7 +213,7 @@ export default function SponsorDashboard() {
                         <button onClick={() => handleApprove(b.id, b.contributorAddress)} className="flex-1 primary-btn text-[10px] py-3 tracking-widest">
                           APPROVE
                         </button>
-                        <button onClick={() => handleDispute(b.id)} className="flex-1 py-3 surface-container-highest text-on-surface font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-error/10 hover:text-error transition-all">
+                        <button onClick={() => handleDispute(b.id, b.contributorAddress)} className="flex-1 py-3 surface-container-highest text-on-surface font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-error/10 hover:text-error transition-all">
                           DISPUTE
                         </button>
                       </div>

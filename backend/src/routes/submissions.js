@@ -11,7 +11,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 // POST /submit: Handles both Normal & ZK Commit modes
 router.post("/submit", upload.single("workFile"), async (req, res) => {
   try {
-    const { bountyId, contributorAddress, workContent, isZkCommitment } = req.body;
+    const { bountyId, contributorAddress, contributorEmail, workContent, isZkCommitment } = req.body;
     let workUrl = null;
     let workHashToVerify = "";
     
@@ -46,6 +46,7 @@ router.post("/submit", upload.single("workFile"), async (req, res) => {
         id: submissionId,
         bountyId,
         contributorAddress,
+      contributorEmail: contributorEmail || null,
         workUrl, // Null if ZK enabled
         workHash: workHashToVerify,
         commitmentHash: isZkCommitment === "true" ? workHashToVerify : null,
@@ -53,7 +54,7 @@ router.post("/submit", upload.single("workFile"), async (req, res) => {
         createdAt: new Date().toISOString()
     });
     
-    await updateBounty(bountyId, { status: "submitted", contributorAddress });
+    await updateBounty(bountyId, { status: "submitted", contributorAddress, contributorEmail: contributorEmail || null });
     
     await createTransaction({
         id: uuidv4(),

@@ -5,6 +5,7 @@ const submissionSchema = new mongoose.Schema(
     id: { type: String, required: true, unique: true },
     bountyId: { type: String, required: true },
     contributorAddress: { type: String },
+    contributorEmail: { type: String },
     workUrl: { type: String },
     workHash: { type: String },
     commitmentHash: { type: String },

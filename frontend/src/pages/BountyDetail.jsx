@@ -39,9 +39,11 @@ export default function BountyDetail() {
     setSubmitting(true);
     const t = toast.loading("Submitting work...");
     try {
+      const contributorEmail = localStorage.getItem("userEmail");
       const res = await api.post("/api/submissions/submit", {
         bountyId: id,
         contributorAddress: address,
+        ...(contributorEmail ? { contributorEmail } : {}),
         workContent: workText
       });
       if (res.data.unsignedAppCallTxn) {

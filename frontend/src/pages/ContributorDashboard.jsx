@@ -45,8 +45,12 @@ export default function ContributorDashboard() {
     const t = toast.loading("Submitting work...");
     try {
       const formData = new FormData();
+      const contributorEmail = localStorage.getItem("userEmail");
       formData.append("bountyId", selectedBountyId);
       formData.append("contributorAddress", address);
+      if (contributorEmail) {
+        formData.append("contributorEmail", contributorEmail);
+      }
       if (workFile) {
         formData.append("workFile", workFile);
       } else {

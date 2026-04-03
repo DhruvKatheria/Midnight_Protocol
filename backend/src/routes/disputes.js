@@ -18,42 +18,90 @@ const {
 } = require("../services/mongo");
 const { updateTrustScore } = require("../services/trustScore");
 
+function normalizeIdentity(value) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+function collectUserIdentities(user) {
+  return [
+    user?.uid,
+    user?.walletAddress,
+    user?.address,
+    user?.email,
+  ]
+    .map(normalizeIdentity)
+    .filter(Boolean);
+}
+
 // POST /:bountyId/raise
 router.post("/:bountyId/raise", async (req, res) => {
   try {
     const { bountyId } = req.params;
-    const { sponsorAddress, reason } = req.body;
+    const { sponsorAddress, reason, sponsorEmail, contributorEmail } = req.body;
 
     const bountyObj = await getBounty(bountyId);
     if (!bountyObj) throw new Error("Bounty not found");
 
     const submissions = await getSubmissionsByBounty(bountyId);
-    
-    // Identify participants to exclude
-    // We check against both the provided address and potentially the user's records
-    const sponsorInput = (sponsorAddress || "").toLowerCase();
-    
-    // Contributor is the user who made the submission
+
+    // Seed participant identities from request + bounty + latest submission inputs.
+    const participantIdentitySeed = new Set(
+      [
+        sponsorAddress,
+        sponsorEmail,
+        bountyObj?.sponsorEmail,
+        bountyObj?.sponsorAddress,
+        bountyObj?.sponsorWallet,
+        bountyObj?.sponsorUid,
+      ]
+        .map(normalizeIdentity)
+        .filter(Boolean)
+    );
+
+    // Contributor is taken from latest submission (fallback to bounty-level contributorAddress if present).
     const latestSub = submissions && submissions.length > 0 ? submissions[submissions.length - 1] : null;
-    const contributorInput = (latestSub?.contributorAddress || "").toLowerCase();
+    const contributorAddress = latestSub?.contributorAddress || bountyObj?.contributorAddress;
+    const normalizedContributor = normalizeIdentity(contributorAddress);
+    if (normalizedContributor) {
+      participantIdentitySeed.add(normalizedContributor);
+    }
+
+    const normalizedContributorEmail = normalizeIdentity(contributorEmail || latestSub?.contributorEmail);
+    if (normalizedContributorEmail) {
+      participantIdentitySeed.add(normalizedContributorEmail);
+    }
 
     const allUsers = await getAllUsers();
-    
+
+    const blockedEmails = new Set(
+      [
+        sponsorEmail,
+        bountyObj?.sponsorEmail,
+        contributorEmail,
+        latestSub?.contributorEmail,
+      ]
+        .map(normalizeIdentity)
+        .filter(Boolean)
+    );
+
+    // Expand participant identities to include linked email/uid/wallet fields.
+    const participantIdentities = new Set(participantIdentitySeed);
+    for (const user of allUsers) {
+      const identities = collectUserIdentities(user);
+      if (identities.some((id) => participantIdentitySeed.has(id))) {
+        identities.forEach((id) => participantIdentities.add(id));
+      }
+    }
+
     // Filter eligible validators (anyone but participants)
-    let eligibleValidators = allUsers.filter(u => {
-        const uId = (u.uid || "").toLowerCase();
-        const uWallet = (u.walletAddress || u.address || "").toLowerCase();
-        const uEmail = (u.email || "").toLowerCase();
+    let eligibleValidators = allUsers.filter((u) => {
+      const candidateEmail = normalizeIdentity(u?.email);
+      if (!candidateEmail) return false;
+      if (blockedEmails.has(candidateEmail)) return false;
 
-        // Check if this user is the Sponsor
-        if (uId === sponsorInput || uWallet === sponsorInput || uEmail === sponsorInput) return false;
-        
-        // Check if this user is the Contributor
-        if (contributorInput !== "") {
-            if (uId === contributorInput || uWallet === contributorInput || uEmail === contributorInput) return false;
-        }
-
-        return true;
+      const identities = collectUserIdentities(u);
+      const isParticipant = identities.some((id) => participantIdentities.has(id));
+      return !isParticipant;
     });
 
     // Shuffle and pick 3
@@ -65,17 +113,26 @@ router.post("/:bountyId/raise", async (req, res) => {
             .slice(0, 3);
         validatorsAccs = selectedValidators.map(u => u.uid || u.address);
     } else {
-        // Fallback if not enough users in DB
-        const placeholders = ["VAL1", "VAL2", "VAL3"];
-        validatorsAccs = eligibleValidators.map(u => u.uid || u.address);
-        selectedValidators = [...eligibleValidators];
-        while (validatorsAccs.length < 3) {
-            const nextPlace = placeholders.shift();
-            if (!validatorsAccs.includes(nextPlace)) {
-                validatorsAccs.push(nextPlace);
-                selectedValidators.push({ uid: nextPlace, email: "placeholder@system.io" });
-            }
+      // Fallback if not enough users in DB
+      validatorsAccs = eligibleValidators.map((u) => u.uid || u.address);
+      selectedValidators = [...eligibleValidators];
+
+      const usedValidatorIds = new Set(validatorsAccs.map(normalizeIdentity));
+      let placeholderCounter = 1;
+
+      while (validatorsAccs.length < 3) {
+        const candidate = placeholderCounter <= 3 ? `VAL${placeholderCounter}` : `VAL_PLACEHOLDER_${placeholderCounter}`;
+        placeholderCounter += 1;
+
+        const normalizedCandidate = normalizeIdentity(candidate);
+        if (participantIdentities.has(normalizedCandidate) || usedValidatorIds.has(normalizedCandidate)) {
+          continue;
         }
+
+        validatorsAccs.push(candidate);
+        selectedValidators.push({ uid: candidate, email: "placeholder@system.io" });
+        usedValidatorIds.add(normalizedCandidate);
+      }
     }
 
     console.log("==========================================");
