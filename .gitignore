@@ -7,6 +7,7 @@
 backend/.env
 frontend/.env
 smart-contracts/.env.deployment
+new-frontend
 
 # Firebase / Service Account Keys
 backend/firebase-admin-key.json

@@ -27,13 +27,6 @@ export default function ProfileSection() {
     }
   };
 
-  const navLinks = [
-    { name: "Identity", icon: "fingerprint", path: "/profile" },
-    { name: "Trust Tokens", icon: "token", path: "#" },
-    { name: "Skills", icon: "psychology", path: "#" },
-    { name: "Work History", icon: "history_edu", path: "#" },
-    { name: "Disputes", icon: "gavel", path: "#" },
-  ];
 
   if (!address) return null;
 
@@ -59,22 +52,23 @@ export default function ProfileSection() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1">
-        {navLinks.map((link) => {
-          const isActive = location.pathname === link.path;
-          return (
-            <Link
-              key={link.name}
-              to={link.path}
-              className={isActive ? "sidebar-link-active" : "sidebar-link"}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-                {link.icon}
-              </span>
-              <span className="text-sm font-medium">{link.name}</span>
-            </Link>
-          );
-        })}
+      <nav className="flex-1 px-4 py-8 space-y-2">
+        <Link to="/profile" className="sidebar-link">
+          <span className="material-symbols-outlined text-lg">fingerprint</span>
+          <span>Identity</span>
+        </Link>
+        <div className="sidebar-link opacity-40 cursor-not-allowed">
+          <span className="material-symbols-outlined text-lg">token</span>
+          <span>Trust Tokens</span>
+        </div>
+        <Link to="/validators" className="sidebar-link">
+          <span className="material-symbols-outlined text-lg">gavel</span>
+          <span>Validators</span>
+        </Link>
+        <div className="sidebar-link opacity-40 cursor-not-allowed">
+          <span className="material-symbols-outlined text-lg">troubleshoot</span>
+          <span>Disputes</span>
+        </div>
       </nav>
 
       {/* Footer Actions */}

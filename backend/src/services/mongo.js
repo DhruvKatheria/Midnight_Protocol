@@ -179,6 +179,18 @@ async function getAllOpenDisputes() {
   }
 }
 
+async function getDisputesByValidator(address) {
+  try {
+    return await Dispute.find({
+      validators: address,
+      status: "open"
+    }).lean();
+  } catch (err) {
+    console.error("Error fetching assigned disputes:", err);
+    throw err;
+  }
+}
+
 async function updateDispute(disputeId, updates) {
   try {
     await Dispute.findOneAndUpdate({ id: disputeId }, updates);
@@ -246,27 +258,28 @@ module.exports = {
   getUser,
   updateUser,
   getAllUsers,
-  
+
   // Bounties
   createBounty,
   getBounty,
   getBountiesByCreator,
   getAllBounties,
   updateBounty,
-  
+
   // Submissions
   createSubmission,
   getSubmissionsByBounty,
   getSubmissionsByUser,
   updateSubmission,
-  
+
   // Disputes
   createDispute,
   getDispute,
   getDisputesByBounty,
+  getDisputesByValidator,
   getAllOpenDisputes,
   updateDispute,
-  
+
   // Transactions
   createTransaction,
   getTransaction,

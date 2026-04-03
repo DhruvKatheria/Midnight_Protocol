@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { useWallet } from "../context/walletContext";
 import toast from "react-hot-toast";
+import ProfileSection from "../components/ProfileSection";
 
 export default function ValidatorPanel() {
   const { address } = useWallet();
@@ -15,154 +16,197 @@ export default function ValidatorPanel() {
   const fetchDisputes = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/api/disputes/open");
+      const userId = localStorage.getItem("userId");
+      // Use the userId (UID) for querying disputes assigned to this account
+      const res = await api.get(`/api/disputes/assigned?address=${userId || address}`);
       setDisputes(res.data || []);
-    } catch(err) {
-      toast.error("Failed to load disputes.");
+    } catch (err) {
+      toast.error("Failed to load your assigned cases.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleCopy = (text) => {
+    if (!text) return;
     navigator.clipboard.writeText(text);
-    toast.success("Hash copied!", { icon: "📋" });
+    toast.success("Hash copied to clipboard", {
+      style: { background: "#0e0e0e", color: "#69daff", border: "1px solid #69daff40" },
+      iconTheme: { primary: "#69daff", secondary: "#0e0e0e" }
+    });
   };
 
   const handleVote = async (disputeId, approve) => {
-    const t = toast.loading("Casting validator vote...");
+    const t = toast.loading("Recording on-chain verdict...");
     try {
+      const userId = localStorage.getItem("userId");
       await api.post(`/api/disputes/${disputeId}/vote`, {
-        validatorAddress: address,
+        validatorAddress: userId || address,
         approve
       });
-      toast.success("Vote registered. Consensus updated.", { id: t });
+      toast.success("Verdict recorded. Consensus updated.", { id: t });
       fetchDisputes();
-    } catch(e) {
+    } catch (e) {
       toast.error(e.response?.data?.error || "Vote failed", { id: t });
     }
   };
 
-  if (!address) return <div className="flex items-center justify-center min-h-[60vh]"><p className="text-on-surface-variant text-lg">Connect wallet.</p></div>;
+  if (!address) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <p className="text-on-surface-variant text-lg">Please connect your wallet to access the Validator Portal.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="px-6 max-w-7xl mx-auto animate-fade-in pb-10">
-      {/* Header */}
-      <header className="mb-12 pt-4">
-        <h1 className="text-5xl md:text-6xl font-headline font-extrabold tracking-tight mb-4">Validator Panel</h1>
-        <p className="text-on-surface-variant max-w-2xl leading-relaxed">
-          Resolve disputes and maintain network integrity. Your reputation score and stake weight determine the influence of your final verdicts.
-        </p>
-      </header>
-
-      {/* Stats Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        <div className="bg-surface-container-low rounded-xl p-6">
-          <p className="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Active Stake</p>
-          <div className="text-3xl font-headline font-bold text-primary">12,450 ALGO</div>
-        </div>
-        <div className="bg-surface-container-low rounded-xl p-6">
-          <p className="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Total Earnings</p>
-          <div className="text-3xl font-headline font-bold text-on-surface">3,120 ALGO</div>
-        </div>
-        <div className="bg-surface-container-low rounded-xl p-6">
-          <p className="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Reputation Score</p>
-          <div className="text-3xl font-headline font-bold text-tertiary">98.4%</div>
-        </div>
-        <div className="bg-surface-container-low rounded-xl p-6">
-          <p className="text-on-surface-variant text-sm font-label uppercase tracking-widest mb-2">Disputes Pending</p>
-          <div className="text-3xl font-headline font-bold text-error">{disputes.length} Cases</div>
-        </div>
+    <div className="flex min-h-screen">
+      {/* Sidebar Navigation */}
+      <div className="hidden lg:block w-64 fixed h-screen border-r border-outline-variant/10 surface-1">
+        <ProfileSection />
       </div>
 
-      {/* Disputes Section */}
-      <section className="mb-16">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-headline font-bold tracking-tight">Available Disputes</h2>
+      {/* Main Content Area */}
+      <main className="flex-1 lg:ml-64 px-6 md:px-12 py-8 max-w-7xl">
+        {/* Header */}
+        <header className="mb-16">
+          <h1 className="text-5xl md:text-6xl font-headline font-black tracking-tighter text-on-surface mb-6">
+            Validator <span className="text-primary">Panel</span>
+          </h1>
+          <p className="text-on-surface-variant max-w-2xl text-lg font-medium leading-relaxed opacity-80">
+            Maintain ecosystem integrity by resolving cross-participant disputes. Your verdicts are anchored on Algorand and influence global Trust Scores.
+          </p>
+        </header>
+
+        {/* Validator Stats Bento */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <div className="surface-1 p-8 rounded-[2rem] border border-outline-variant/5">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant mb-4 font-label">Governance Power</p>
+            <div className="text-4xl font-headline font-black text-primary tracking-tighter">12.8k <span className="text-base text-on-surface-variant">VP</span></div>
+          </div>
+          <div className="surface-1 p-8 rounded-[2rem] border border-outline-variant/5">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant mb-4 font-label">Accuracy Rate</p>
+            <div className="text-4xl font-headline font-black text-on-surface tracking-tighter">98.4%</div>
+          </div>
+          <div className="surface-1 p-8 rounded-[2rem] border border-primary/10">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-4 font-label">Pending Cases</p>
+            <div className="text-4xl font-headline font-black text-on-surface tracking-tighter">{disputes.length} <span className="text-base text-on-surface-variant uppercase">Required</span></div>
+          </div>
         </div>
 
-        {loading ? (
-          <div className="animate-pulse bg-surface-container-low h-64 rounded-xl"></div>
-        ) : disputes.length === 0 ? (
-          <div className="bg-surface-container-low p-10 text-center text-on-surface-variant rounded-xl">Your queue is empty.</div>
-        ) : (
-          <div className="space-y-6">
-            {disputes.map(disp => {
-              const hasVoted = disp.voterAddresses && disp.voterAddresses.includes(address);
+        {/* Assigned Cases Section */}
+        <section className="space-y-10">
+          <div className="flex items-center gap-4">
+            <h2 className="text-2xl font-headline font-black text-on-surface uppercase tracking-tight">Assigned Inquiries</h2>
+            <div className="h-px flex-1 bg-outline-variant/10"></div>
+          </div>
 
-              return (
-                <div key={disp.id} className="bg-surface-container-low rounded-xl p-8 hover:-translate-y-1 transition-all duration-300">
-                  <div className="flex flex-col lg:flex-row gap-8">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="text-xs bg-error/10 text-error px-2 py-0.5 rounded font-bold uppercase tracking-tighter">Disputed</span>
-                        <span className="text-on-surface-variant text-xs font-medium">Dispute #{disp.id?.substring(0,8)}</span>
-                      </div>
-                      <h3 className="text-2xl font-headline font-bold mb-4">{disp.bountyTitle || "Dispute Case"}</h3>
-                      <p className="text-on-surface-variant mb-6 leading-relaxed">
-                        <strong className="text-on-surface">Reason:</strong> "{disp.reason}"
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div className="bg-surface-container-high p-4 rounded-lg">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="material-symbols-outlined text-sm text-primary">description</span>
-                            <span className="text-xs font-bold text-on-surface-variant uppercase">Original Brief Hash</span>
-                          </div>
-                          <code className="text-xs text-primary font-mono break-all opacity-80 cursor-pointer" onClick={() => handleCopy(disp.originalBrief || '')}>
-                            {disp.originalBrief?.substring(0, 24) || "Loading..."}...
-                          </code>
-                        </div>
-                        <div className="bg-surface-container-high p-4 rounded-lg">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="material-symbols-outlined text-sm text-tertiary">upload_file</span>
-                            <span className="text-xs font-bold text-on-surface-variant uppercase">Submission Hash</span>
-                          </div>
-                          <code className="text-xs text-tertiary font-mono break-all opacity-80 cursor-pointer" onClick={() => handleCopy(disp.submissionHash || '')}>
-                            {disp.submissionHash?.substring(0, 24) || "Loading..."}...
-                          </code>
-                        </div>
-                      </div>
-                    </div>
+          {loading ? (
+            <div className="animate-pulse surface-1 h-96 rounded-3xl"></div>
+          ) : disputes.length === 0 ? (
+            <div className="surface-1 p-16 text-center rounded-[2rem] border border-dashed border-outline-variant/10">
+              <span className="material-symbols-outlined text-5xl text-on-surface-variant mb-4 opacity-50">verified_user</span>
+              <p className="text-on-surface-variant text-lg font-bold">Your verification queue is currently clear.</p>
+              <p className="text-on-surface-variant text-sm mt-2 font-medium opacity-60 uppercase tracking-widest leading-relaxed">No open disputes require your consensus at this time.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-8">
+              {disputes.map(disp => {
+                const userId = localStorage.getItem("userId");
+                const currentVoterId = userId || address;
+                const hasVoted = disp.voterAddresses && disp.voterAddresses.includes(currentVoterId);
 
-                    {/* Voting Interface */}
-                    <div className="lg:w-80 bg-surface-container-high rounded-xl p-6 flex flex-col justify-between">
-                      {hasVoted ? (
-                        <div className="text-center py-8">
-                          <span className="material-symbols-outlined text-4xl text-primary mb-2">how_to_vote</span>
-                          <p className="font-bold text-on-surface">Vote Submitted</p>
-                          <p className="text-xs text-on-surface-variant mt-1">Your verdict has been recorded</p>
+                return (
+                  <div key={disp.id} className="surface-1 rounded-[2.5rem] border border-outline-variant/10 overflow-hidden hover:surface-2 transition-all duration-500">
+                    <div className="flex flex-col xl:flex-row">
+                      {/* Case Details */}
+                      <div className="flex-1 p-8 md:p-12 border-b xl:border-b-0 xl:border-r border-outline-variant/10">
+                        <div className="flex items-center gap-4 mb-8">
+                          <span className="bg-error/10 text-error text-[10px] px-3 py-1.5 rounded-lg border border-error/20 font-black uppercase tracking-[0.1em]">Open Dispute</span>
+                          <span className="text-on-surface-variant font-mono text-[10px] uppercase">ID: {disp.id?.substring(0, 12)}...</span>
                         </div>
-                      ) : (
-                        <>
+
+                        <h3 className="text-3xl font-headline font-black text-on-surface mb-6 uppercase tracking-tight">{disp.bountyTitle}</h3>
+
+                        <div className="space-y-8">
                           <div>
-                            <p className="text-sm font-label text-on-surface-variant mb-4">Cast your Verdict</p>
-                            <div className="space-y-3 mb-6">
-                              <button onClick={() => handleVote(disp.id, true)} className="w-full bg-surface-container-highest hover:bg-primary/20 hover:text-primary py-3 rounded-lg font-bold text-sm transition-all group flex items-center justify-between px-4">
-                                <span>Approve Contributor</span>
-                                <span className="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">how_to_reg</span>
-                              </button>
-                              <button onClick={() => handleVote(disp.id, false)} className="w-full bg-surface-container-highest hover:bg-error/20 hover:text-error py-3 rounded-lg font-bold text-sm transition-all group flex items-center justify-between px-4">
-                                <span>Approve Sponsor</span>
-                                <span className="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">gavel</span>
-                              </button>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Claim Reason</p>
+                            <p className="text-on-surface-variant text-lg font-medium leading-relaxed italic pr-4">
+                              "{disp.reason}"
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="surface-container-high p-6 rounded-2xl border border-outline-variant/5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">Project Brief</p>
+                              <p className="text-sm text-on-surface font-medium line-clamp-3 mb-4">{disp.bountyDescription}</p>
+                              <code className="text-[10px] text-primary font-mono cursor-pointer hover:underline opacity-60" onClick={() => handleCopy(disp.originalBrief)}>
+                                {disp.originalBrief?.substring(0, 32)}...
+                              </code>
+                            </div>
+                            <div className="surface-container-high p-6 rounded-2xl border border-primary/5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Delivered Work</p>
+                              <p className="text-sm text-on-surface font-medium line-clamp-3 mb-4">{disp.submissionContent}</p>
+                              <code className="text-[10px] text-tertiary font-mono cursor-pointer hover:underline opacity-60" onClick={() => handleCopy(disp.submissionHash)}>
+                                {disp.submissionHash?.substring(0, 32)}...
+                              </code>
                             </div>
                           </div>
-                          <div className="pt-4 border-t border-outline-variant/10">
-                            <div className="flex justify-between text-xs mb-1">
-                              <span className="text-on-surface-variant">Current Votes</span>
-                              <span className="text-on-surface"><span className="text-primary">{disp.votes?.approve || 0} Appr</span> / <span className="text-error">{disp.votes?.reject || 0} Rej</span></span>
+                        </div>
+                      </div>
+
+                      {/* Voting Sidebar */}
+                      <div className="xl:w-96 p-8 md:p-12 surface-container flex flex-col justify-between">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-on-surface-variant mb-8 border-b border-outline-variant/10 pb-4">Consensus Verdict</p>
+
+                          {hasVoted ? (
+                            <div className="text-center py-10 surface-container-highest rounded-3xl border border-primary/20 animate-fade-in">
+                              <span className="material-symbols-outlined text-4xl text-primary mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                              <p className="font-headline font-black text-on-surface uppercase tracking-tight">Verdict Cascaded</p>
+                              <p className="text-[10px] text-on-surface-variant mt-2 font-black uppercase tracking-widest">Awaiting majority consensus</p>
                             </div>
+                          ) : (
+                            <div className="space-y-4">
+                              <button onClick={() => handleVote(disp.id, true)} className="w-full surface-container-highest hover:bg-primary hover:text-background py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-between px-8 group border border-outline-variant/10">
+                                <span>APPROVE WORK</span>
+                                <span className="material-symbols-outlined text-lg group-hover:scale-125 transition-transform">how_to_reg</span>
+                              </button>
+                              <button onClick={() => handleVote(disp.id, false)} className="w-full surface-container-highest hover:bg-error hover:text-background py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-between px-8 group border border-outline-variant/10">
+                                <span>UPHOLD DISPUTE</span>
+                                <span className="material-symbols-outlined text-lg group-hover:rotate-90 transition-transform">gavel</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="mt-12">
+                          <div className="flex justify-between items-end mb-4">
+                            <span className="text-[8px] font-black uppercase tracking-widest text-on-surface-variant">Live Weighting</span>
+                            <span className="text-on-surface font-mono text-[10px]">
+                              {disp.votes?.approve || 0} / {disp.votes?.reject || 0}
+                            </span>
                           </div>
-                        </>
-                      )}
+                          <div className="h-1 bg-outline-variant/10 rounded-full flex overflow-hidden">
+                            <div
+                              className="h-full bg-primary transition-all duration-1000"
+                              style={{ width: `${(disp.votes?.approve / ((disp.votes?.approve + disp.votes?.reject) || 1)) * 100}%` }}
+                            ></div>
+                            <div
+                              className="h-full bg-error transition-all duration-1000"
+                              style={{ width: `${(disp.votes?.reject / ((disp.votes?.approve + disp.votes?.reject) || 1)) * 100}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }

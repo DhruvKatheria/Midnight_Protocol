@@ -12,8 +12,9 @@ const disputeSchema = new mongoose.Schema(
       reject: { type: Number, default: 0 },
     },
     voterAddresses: { type: [String], default: [] },
-    voters: { type: [String], default: [] },
+    voters: { type: [Object], default: [] }, // Array of { address: string, approved: boolean }
     status: { type: String, default: "open" },
+    outcome: { type: String },
   },
   { timestamps: true }
 );

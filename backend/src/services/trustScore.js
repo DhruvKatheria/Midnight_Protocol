@@ -1,4 +1,4 @@
-const { getUser, updateUser } = require("./firebase");
+const { getUser, updateUser } = require("./mongo");
 const algosdk = require("algosdk");
 const { algodClient } = require("./algorand");
 

@@ -51,6 +51,11 @@ function App() {
             } />
             <Route path="/validator" element={
               <ProtectedRoute allowedRoles={['validator']}>
+                <SponsorDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/validators" element={
+              <ProtectedRoute>
                 <ValidatorPanel />
               </ProtectedRoute>
             } />

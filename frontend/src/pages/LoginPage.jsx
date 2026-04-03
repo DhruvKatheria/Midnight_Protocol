@@ -58,6 +58,7 @@ export default function LoginPage() {
       const res = await api.post("/api/auth/login", { email, password });
       toast.success("Logged in successfully!");
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userId", res.data._id); // Save UID for governance identification
       setUserRole(res.data.role); // Save role derived from backend
       setStep(2); // Proceed to wallet connect
     } catch (err) {
