@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const algosdk = require("algosdk");
 const { hashBrief } = require("../services/hashing");
 const { buildAppCallTxn, buildPayTxn, submitSignedTxn } = require("../services/algorand");
-const { createBounty, getBounty, updateBounty, getAllBounties, createTransaction } = require("../services/firebase");
+const { createBounty, getBounty, updateBounty, getAllBounties, createTransaction } = require("../services/mongo");
 const { updateTrustScore } = require("../services/trustScore");
 
 // POST /create

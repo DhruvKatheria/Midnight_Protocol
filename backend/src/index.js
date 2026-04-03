@@ -7,6 +7,10 @@ const rateLimit = require("express-rate-limit");
 // Create Express app
 const app = express();
 
+// Connect to MongoDB
+const connectDB = require("./config/db");
+connectDB();
+
 // ===========================
 // MIDDLEWARE SETUP
 // ===========================
@@ -54,6 +58,7 @@ const userRoutes = require("./routes/users");
 const submissionRoutes = require("./routes/submissions");
 const disputeRoutes = require("./routes/disputes");
 const transactionRoutes = require("./routes/transactions");
+const authRoutes = require("./routes/auth");
 
 // Health check
 app.get("/", (req, res) => {
@@ -71,6 +76,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/disputes", disputeRoutes);
 app.use("/api/transactions", transactionRoutes);
+app.use("/api/auth", authRoutes);
 
 // Test endpoints
 app.get("/test/hash", (req, res) => {

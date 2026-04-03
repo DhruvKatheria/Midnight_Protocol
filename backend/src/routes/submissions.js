@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const { hashBrief, verifyBrief } = require("../services/hashing");
 const { uploadToIPFS } = require("../services/ipfs");
 const { buildAppCallTxn } = require("../services/algorand");
-const { createSubmission, getSubmissionsByBounty, updateBounty, getSubmission, updateSubmission, createTransaction } = require("../services/firebase");
+const { createSubmission, getSubmissionsByBounty, updateBounty, getSubmission, updateSubmission, createTransaction } = require("../services/mongo");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 

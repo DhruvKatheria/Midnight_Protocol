@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getUser, createUser, updateUser } = require("../services/firebase");
+const { getUser, createUser, updateUser } = require("../services/mongo");
 
 // GET /:address
 router.get("/:address", async (req, res) => {

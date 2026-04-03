@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const { buildAppCallTxn } = require("../services/algorand");
-const { createDispute, getDispute, updateDispute, updateBounty, createTransaction } = require("../services/firebase");
+const { createDispute, getDispute, updateDispute, updateBounty, createTransaction } = require("../services/mongo");
 const { updateTrustScore } = require("../services/trustScore");
-const { getAllUsers } = require("../services/firebase"); 
+const { getAllUsers } = require("../services/mongo"); 
 
 // POST /:bountyId/raise
 router.post("/:bountyId/raise", async (req, res) => {

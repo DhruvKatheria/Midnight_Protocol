@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getTransactionsByUser } = require("../services/firebase");
+const { getTransactionsByUser } = require("../services/mongo");
 
 // GET /:bountyId
 router.get("/:bountyId", async (req, res) => {
