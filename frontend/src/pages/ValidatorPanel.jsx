@@ -4,6 +4,8 @@ import { useWallet } from "../context/walletContext";
 import toast from "react-hot-toast";
 import ProfileSection from "../components/ProfileSection";
 
+const TRUST_REFRESH_EVENT = "settlechain:trust-refresh";
+
 export default function ValidatorPanel() {
   const { address } = useWallet();
   const [disputes, setDisputes] = useState([]);
@@ -40,11 +42,24 @@ export default function ValidatorPanel() {
     const t = toast.loading("Recording on-chain verdict...");
     try {
       const userId = localStorage.getItem("userId");
-      await api.post(`/api/disputes/${disputeId}/vote`, {
+      const currentIdentity = userId || address;
+      const res = await api.post(`/api/disputes/${disputeId}/vote`, {
         validatorAddress: userId || address,
         approve
       });
-      toast.success("Verdict recorded. Consensus updated.", { id: t });
+
+      const validatorChanges = res.data?.trustChanges?.validators || [];
+      const myUpdate = validatorChanges.find((item) => item.userId === currentIdentity);
+      if (myUpdate && Number.isFinite(Number(myUpdate.newScore))) {
+        toast.success(
+          `Verdict recorded. Trust score: ${Number(myUpdate.oldScore || 0).toFixed(2)} -> ${Number(myUpdate.newScore).toFixed(2)} (${Number(myUpdate.delta || 0) >= 0 ? "+" : ""}${Number(myUpdate.delta || 0).toFixed(2)})`,
+          { id: t }
+        );
+      } else {
+        toast.success("Verdict recorded. Consensus updated.", { id: t });
+      }
+
+      window.dispatchEvent(new Event(TRUST_REFRESH_EVENT));
       fetchDisputes();
     } catch (e) {
       toast.error(e.response?.data?.error || "Vote failed", { id: t });

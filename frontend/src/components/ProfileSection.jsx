@@ -1,34 +1,62 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { useWallet } from "../context/walletContext";
 import api from "../services/api";
 
+const TRUST_REFRESH_EVENT = "settlechain:trust-refresh";
+const TRUST_SCORE_FALLBACK = 50;
+const TRUST_SCORE_POLL_MS = 10000;
+
 export default function ProfileSection() {
   const { address, role } = useWallet();
-  const location = useLocation();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (address) {
-      fetchProfile();
-    }
-  }, [address]);
+  const fetchProfile = useCallback(async () => {
+    const storedUserId = localStorage.getItem("userId");
+    const storedUserEmail = localStorage.getItem("userEmail");
+    const identity = storedUserId || storedUserEmail || address;
 
-  const fetchProfile = async () => {
+    if (!identity) {
+      setProfile(null);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      const res = await api.get(`/api/users/${address}`);
+      const res = await api.get(`/api/users/${identity}`);
       setProfile(res.data.user || res.data);
     } catch (err) {
       console.warn("Profile not found or API error");
     } finally {
       setLoading(false);
     }
-  };
+  }, [address]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  useEffect(() => {
+    if (!address) return undefined;
+
+    const intervalId = window.setInterval(fetchProfile, TRUST_SCORE_POLL_MS);
+    const onTrustRefresh = () => fetchProfile();
+    window.addEventListener(TRUST_REFRESH_EVENT, onTrustRefresh);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener(TRUST_REFRESH_EVENT, onTrustRefresh);
+    };
+  }, [address, fetchProfile]);
 
 
   if (!address) return null;
+
+  const resolvedTrustScore = Number.isFinite(Number(profile?.trustScore))
+    ? Number(profile.trustScore)
+    : TRUST_SCORE_FALLBACK;
 
   return (
     <aside className="w-64 flex flex-col py-6 h-full">
@@ -48,6 +76,9 @@ export default function ProfileSection() {
           <p className="text-[10px] text-on-surface-variant uppercase tracking-widest truncate">
             {role || "Contributor"}
           </p>
+          <p className="text-[11px] text-primary font-black uppercase tracking-wider mt-1">
+            Trust Score: {resolvedTrustScore.toFixed(2)}
+          </p>
         </div>
       </div>
 
@@ -59,7 +90,7 @@ export default function ProfileSection() {
         </Link>
         <div className="sidebar-link opacity-40 cursor-not-allowed">
           <span className="material-symbols-outlined text-lg">token</span>
-          <span>Trust Tokens</span>
+          <span>Trust Score</span>
         </div>
         <Link to="/validators" className="sidebar-link">
           <span className="material-symbols-outlined text-lg">gavel</span>

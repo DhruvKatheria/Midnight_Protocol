@@ -26,7 +26,7 @@ SettleChain is a decentralized bounty escrow platform on Algorand. It utilizes S
 Immediately after Settlement, check the **Profile Page**. 
 - The Contributor receives `+10` Trust Score.
 - The Sponsor receives `+5` Trust Score.
-These numbers actively Mint and Burn the **SettleChain TRUST Token ASA** globally on TestNet.
+These values update each participant's **SettleChain Trust Score** after every settlement outcome.
 
 ### 3. Arbitration Path (Disputes & Validators)
 1. **Dispute Raised:** When a Sponsor rejects a submission, they execute a `Dispute`.

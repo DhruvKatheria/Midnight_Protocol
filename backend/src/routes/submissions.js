@@ -12,6 +12,9 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.post("/submit", upload.single("workFile"), async (req, res) => {
   try {
     const { bountyId, contributorAddress, contributorEmail, workContent, isZkCommitment } = req.body;
+    const bounty = await getBounty(bountyId);
+    if (!bounty) throw new Error("Bounty not found");
+
     let workUrl = null;
     let workHashToVerify = "";
     
@@ -35,8 +38,7 @@ router.post("/submit", upload.single("workFile"), async (req, res) => {
     let unsignedTxnBase64 = null;
     
     if (!isDemoAddress) {
-      const bounty = await getBounty(bountyId);
-      if (!bounty || !bounty.appId) throw new Error("Bounty missing or missing appId");
+      if (!bounty.appId) throw new Error("Bounty missing appId");
       const appCallTxn = await buildAppCallTxn(contributorAddress, "submit", [workHashToVerify], bounty.appId);
       unsignedTxnBase64 = Buffer.from(appCallTxn.toByte()).toString('base64');
     }
@@ -54,7 +56,17 @@ router.post("/submit", upload.single("workFile"), async (req, res) => {
         createdAt: new Date().toISOString()
     });
     
-    await updateBounty(bountyId, { status: "submitted", contributorAddress, contributorEmail: contributorEmail || null });
+    const bountyUpdates = {
+      status: "submitted",
+      contributorAddress,
+      contributorEmail: contributorEmail || null,
+    };
+
+    if (!bounty.firstSubmittedAt) {
+      bountyUpdates.firstSubmittedAt = new Date();
+    }
+
+    await updateBounty(bountyId, bountyUpdates);
     
     await createTransaction({
         id: uuidv4(),

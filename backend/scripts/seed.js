@@ -6,16 +6,17 @@ async function seed() {
   console.log("🌱 Starting Comprehensive SettleChain Database Seed...");
 
   try {
+    const initialTrustScore = Number(process.env.INITIAL_TRUST_SCORE || 50);
     const sponsorAddress = process.env.SPONSOR_WALLET || "SPONSOR_MOCK";
     const contributorAddress = process.env.CONTRIBUTOR_WALLET || "CONTRIBUTOR_MOCK";
     const val1 = process.env.VALIDATOR1_WALLET || "VAL1_MOCK";
     const val2 = process.env.VALIDATOR2_WALLET || "VAL2_MOCK";
 
     // 1. Seed Users
-    await createUser(sponsorAddress, { walletAddress: sponsorAddress, role: "sponsor", trustScore: 80, isStaked: false, createdAt: new Date().toISOString() });
-    await createUser(contributorAddress, { walletAddress: contributorAddress, role: "contributor", trustScore: 60, isStaked: false, createdAt: new Date().toISOString() });
-    await createUser(val1, { walletAddress: val1, role: "validator", trustScore: 90, isStaked: true, stakeAmount: 10, createdAt: new Date().toISOString() });
-    await createUser(val2, { walletAddress: val2, role: "validator", trustScore: 95, isStaked: true, stakeAmount: 10, createdAt: new Date().toISOString() });
+    await createUser(sponsorAddress, { walletAddress: sponsorAddress, role: "sponsor", trustScore: initialTrustScore, isStaked: false, createdAt: new Date().toISOString() });
+    await createUser(contributorAddress, { walletAddress: contributorAddress, role: "contributor", trustScore: initialTrustScore, isStaked: false, createdAt: new Date().toISOString() });
+    await createUser(val1, { walletAddress: val1, role: "validator", trustScore: initialTrustScore, isStaked: true, stakeAmount: 10, createdAt: new Date().toISOString() });
+    await createUser(val2, { walletAddress: val2, role: "validator", trustScore: initialTrustScore, isStaked: true, stakeAmount: 10, createdAt: new Date().toISOString() });
 
     console.log("✅ 4 Users seeded.");
 

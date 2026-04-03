@@ -3,6 +3,11 @@ import api from "../services/api";
 import { useWallet } from "../context/walletContext";
 import toast from "react-hot-toast";
 
+const TRUST_REFRESH_EVENT = "settlechain:trust-refresh";
+const TRUST_SCORE_FALLBACK = 50;
+const TRUST_SCORE_UI_MAX = 100;
+const TRUST_SCORE_POLL_MS = 10000;
+
 export default function ProfilePage() {
   const { address, disconnectWallet, role } = useWallet();
   const [profile, setProfile] = useState(null);
@@ -20,10 +25,29 @@ export default function ProfilePage() {
     }
   }, [address]);
 
+  useEffect(() => {
+    if (!address) return undefined;
+
+    const intervalId = window.setInterval(() => {
+      fetchProfile();
+    }, TRUST_SCORE_POLL_MS);
+
+    const onTrustRefresh = () => fetchProfile();
+    window.addEventListener(TRUST_REFRESH_EVENT, onTrustRefresh);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener(TRUST_REFRESH_EVENT, onTrustRefresh);
+    };
+  }, [address]);
+
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/api/users/${address}`);
+      const storedUserId = localStorage.getItem("userId");
+      const storedUserEmail = localStorage.getItem("userEmail");
+      const identity = storedUserId || storedUserEmail || address;
+      const res = await api.get(`/api/users/${identity}`);
       setProfile(res.data.user || res.data);
     } catch (err) {
       setProfile(null);
@@ -59,6 +83,13 @@ export default function ProfilePage() {
   }
 
   const expertise = ["Smart Contracts", "Algorand SDK", "Security Auditing", "React", "Node.js"];
+  const trustScore = Number.isFinite(Number(profile?.trustScore))
+    ? Number(profile.trustScore)
+    : TRUST_SCORE_FALLBACK;
+  const trustScoreBarPercent = Math.max(
+    0,
+    Math.min(100, (trustScore / TRUST_SCORE_UI_MAX) * 100)
+  );
 
   return (
     <div className="px-6 max-w-7xl mx-auto animate-fade-up pb-20">
@@ -98,12 +129,12 @@ export default function ProfilePage() {
             <div className="flex flex-col gap-3 max-w-md">
               <div className="flex justify-between items-center text-[10px] font-black tracking-widest text-on-surface-variant">
                 <span>IDENTITY TRUST SCORE</span>
-                <span className="text-primary">{profile?.trustScore || 850}/1000</span>
+                <span className="text-primary">{trustScore.toFixed(2)} / {TRUST_SCORE_UI_MAX}</span>
               </div>
               <div className="h-2.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-primary to-primary-container rounded-full shadow-[0_0_12px_rgba(105,218,255,0.4)] transition-all duration-1000"
-                  style={{ width: `${(profile?.trustScore || 85) / 10}%` }}
+                  style={{ width: `${trustScoreBarPercent}%` }}
                 ></div>
               </div>
             </div>

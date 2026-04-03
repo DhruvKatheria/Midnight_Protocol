@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import ProfileSection from "../components/ProfileSection";
 
+const TRUST_REFRESH_EVENT = "settlechain:trust-refresh";
+
 export default function SponsorDashboard() {
   const { address, signAndSend } = useWallet();
   const [bounties, setBounties] = useState([]);
@@ -47,8 +49,16 @@ export default function SponsorDashboard() {
     setIsCreating(true);
     const createToast = toast.loading("Building transaction...");
     try {
+      const sponsorEmail = localStorage.getItem("userEmail");
       const parsedDeadline = deadline ? Math.floor(new Date(deadline).getTime() / 1000) : 0;
-      const payload = { title, description, reward: parseInt(reward), deadline: parsedDeadline, sponsorAddress: address };
+      const payload = {
+        title,
+        description,
+        reward: parseInt(reward),
+        deadline: parsedDeadline,
+        sponsorAddress: address,
+        ...(sponsorEmail ? { sponsorEmail } : {}),
+      };
       const res = await api.post("/api/bounties/create", payload);
       const { briefHash, unsignedAppCallTxn, unsignedPayTxn, appId } = res.data;
 
@@ -73,12 +83,29 @@ export default function SponsorDashboard() {
     }
   };
 
-  const handleApprove = async (bountyId, contributorAddress) => {
+  const handleApprove = async (bountyId, contributorAddress, contributorEmail) => {
     const t = toast.loading("Approving work...");
     try {
-      const res = await api.post(`/api/bounties/${bountyId}/approve`, { sponsorAddress: address, contributorAddress, mockSignedSubmit: true });
+      const sponsorEmail = localStorage.getItem("userEmail");
+      const res = await api.post(`/api/bounties/${bountyId}/approve`, {
+        sponsorAddress: address,
+        ...(sponsorEmail ? { sponsorEmail } : {}),
+        contributorAddress,
+        ...(contributorEmail ? { contributorEmail } : {}),
+        mockSignedSubmit: true,
+      });
       await signAndSend([res.data.unsignedAppCallTxn]);
-      toast.success("Work approved and funds released!", { id: t });
+      const sponsorTrust = res.data?.trustChanges?.sponsor;
+      if (sponsorTrust && Number.isFinite(Number(sponsorTrust.newScore))) {
+        toast.success(
+          `Work approved. Trust score: ${Number(sponsorTrust.oldScore || 0).toFixed(2)} -> ${Number(sponsorTrust.newScore).toFixed(2)} (${Number(sponsorTrust.delta || 0) >= 0 ? "+" : ""}${Number(sponsorTrust.delta || 0).toFixed(2)})`,
+          { id: t }
+        );
+      } else {
+        toast.success("Work approved and funds released!", { id: t });
+      }
+
+      window.dispatchEvent(new Event(TRUST_REFRESH_EVENT));
       fetchMyBounties();
     } catch (error) {
       toast.error("Failed to approve.", { id: t });
@@ -210,7 +237,7 @@ export default function SponsorDashboard() {
                         <span className="text-primary font-headline font-black text-xl">{b.amount} <span className="text-xs">ALGO</span></span>
                       </div>
                       <div className="flex gap-4 pt-2">
-                        <button onClick={() => handleApprove(b.id, b.contributorAddress)} className="flex-1 primary-btn text-[10px] py-3 tracking-widest">
+                        <button onClick={() => handleApprove(b.id, b.contributorAddress, b.contributorEmail)} className="flex-1 primary-btn text-[10px] py-3 tracking-widest">
                           APPROVE
                         </button>
                         <button onClick={() => handleDispute(b.id, b.contributorAddress)} className="flex-1 py-3 surface-container-highest text-on-surface font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-error/10 hover:text-error transition-all">

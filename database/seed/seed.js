@@ -14,6 +14,7 @@ const db = admin.firestore();
 async function seedDatabase() {
   try {
     console.log('Starting database seeding...');
+    const initialTrustScore = Number(process.env.INITIAL_TRUST_SCORE || 50);
 
     // Seed Users Collection
     const usersData = [
@@ -23,7 +24,7 @@ async function seedDatabase() {
         email: 'sponsor@settlechain.com',
         name: 'John Sponsor',
         role: 'sponsor',
-        trustScore: 95,
+        trustScore: initialTrustScore,
         totalBountiesCreated: 5,
         totalSubmissions: 0,
         totalEarned: 0,
@@ -37,7 +38,7 @@ async function seedDatabase() {
         email: 'contributor@settlechain.com',
         name: 'Jane Developer',
         role: 'contributor',
-        trustScore: 88,
+        trustScore: initialTrustScore,
         totalBountiesCreated: 0,
         totalSubmissions: 12,
         totalEarned: 5000,
@@ -51,7 +52,7 @@ async function seedDatabase() {
         email: 'validator@settlechain.com',
         name: 'Alice Validator',
         role: 'validator',
-        trustScore: 98,
+        trustScore: initialTrustScore,
         totalBountiesCreated: 0,
         totalSubmissions: 0,
         totalEarned: 1500,

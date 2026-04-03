@@ -4,11 +4,29 @@ const Submission = require("../models/Submission");
 const Dispute = require("../models/Dispute");
 const Transaction = require("../models/Transaction");
 const { v4: uuidv4 } = require("uuid");
+const { INITIAL_TRUST_SCORE } = require("../config/trust");
+
+function withTrustDefaults(userLike = {}) {
+  const hasTrustScore = Number.isFinite(Number(userLike.trustScore));
+  const resolvedTrustScore = hasTrustScore
+    ? Number(userLike.trustScore)
+    : INITIAL_TRUST_SCORE;
+
+  const hasTrustMirror = Number.isFinite(Number(userLike.trustTokenBalance));
+
+  return {
+    ...userLike,
+    trustScore: resolvedTrustScore,
+    trustTokenBalance: hasTrustMirror
+      ? Number(userLike.trustTokenBalance)
+      : resolvedTrustScore,
+  };
+}
 
 // ========== USERS ==========
 async function createUser(uid, userData) {
   try {
-    const user = new User({ uid, ...userData });
+    const user = new User(withTrustDefaults({ uid, ...userData }));
     await user.save();
     return { success: true, uid };
   } catch (err) {
@@ -20,9 +38,24 @@ async function createUser(uid, userData) {
 
 async function getUser(uid) {
   try {
-    return await User.findOne({
+    if (!uid) return null;
+    const user = await User.findOne({
       $or: [{ uid }, { walletAddress: uid }, { email: uid }],
-    }).lean();
+    });
+    if (!user) return null;
+
+    const needsTrustScoreInit = !Number.isFinite(Number(user.trustScore));
+    const needsTrustMirrorInit = !Number.isFinite(Number(user.trustTokenBalance));
+
+    if (needsTrustScoreInit || needsTrustMirrorInit) {
+      const normalized = withTrustDefaults(user.toObject());
+      user.trustScore = normalized.trustScore;
+      user.trustTokenBalance = normalized.trustTokenBalance;
+      await user.save();
+      return normalized;
+    }
+
+    return user.toObject();
   } catch (err) {
     console.error("Error fetching user:", err);
     throw err;
@@ -31,7 +64,13 @@ async function getUser(uid) {
 
 async function updateUser(uid, updates) {
   try {
-    await User.findOneAndUpdate({ uid }, updates);
+    if (!uid) return { success: false, message: "Missing user identity" };
+    await User.findOneAndUpdate(
+      {
+        $or: [{ uid }, { walletAddress: uid }, { email: uid }],
+      },
+      updates
+    );
     return { success: true };
   } catch (err) {
     console.error("Error updating user:", err);

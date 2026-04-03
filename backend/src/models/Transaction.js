@@ -9,6 +9,9 @@ const transactionSchema = new mongoose.Schema(
     txId: { type: String },
     amount: { type: Number },
     timestamp: { type: String },
+    trustDeltaContributor: { type: Number },
+    trustDeltaSponsor: { type: Number },
+    trustFormulaSnapshot: { type: Object },
   },
   { timestamps: true }
 );

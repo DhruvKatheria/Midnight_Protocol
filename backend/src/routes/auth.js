@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { v4: uuidv4 } = require("uuid");
+const { INITIAL_TRUST_SCORE } = require("../config/trust");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || "your-secret-key-change-in-production", {
@@ -41,7 +42,8 @@ router.post("/signup", async (req, res) => {
       email,
       password: hashedPassword,
       role,
-      trustScore: 50,
+      trustScore: INITIAL_TRUST_SCORE,
+      trustTokenBalance: INITIAL_TRUST_SCORE,
       isStaked: false
     });
 
@@ -51,6 +53,7 @@ router.post("/signup", async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        trustScore: user.trustScore,
         token: generateToken(user.uid),
       });
     } else {
@@ -71,6 +74,19 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
+      let updatedLegacyTrust = false;
+      if (!Number.isFinite(Number(user.trustScore))) {
+        user.trustScore = INITIAL_TRUST_SCORE;
+        updatedLegacyTrust = true;
+      }
+      if (!Number.isFinite(Number(user.trustTokenBalance))) {
+        user.trustTokenBalance = user.trustScore;
+        updatedLegacyTrust = true;
+      }
+      if (updatedLegacyTrust) {
+        await user.save();
+      }
+
       // You may want to check if the role matches, or allow them to login with whatever role they chose initially
       
       res.json({
@@ -78,6 +94,7 @@ router.post("/login", async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role, // Or the role they selected recently if you want to support dynamic roles
+        trustScore: user.trustScore,
         token: generateToken(user.uid),
       });
     } else {

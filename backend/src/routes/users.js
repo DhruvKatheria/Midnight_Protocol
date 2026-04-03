@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { getUser, createUser, updateUser } = require("../services/mongo");
+const { INITIAL_TRUST_SCORE } = require("../config/trust");
 
 // GET /:address
 router.get("/:address", async (req, res) => {
@@ -22,7 +23,7 @@ router.get("/:address/trust-score", async (req, res) => {
     const user = await getUser(req.params.address);
     if (!user) return res.status(404).json({ error: "User not found" });
     
-    res.json({ success: true, trustScore: user.trustScore || 50 });
+    res.json({ success: true, trustScore: user.trustScore ?? INITIAL_TRUST_SCORE });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });

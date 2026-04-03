@@ -16,7 +16,12 @@ const {
   getSubmissionsByBounty,
   updateSubmission
 } = require("../services/mongo");
-const { updateTrustScore } = require("../services/trustScore");
+const {
+  updateTrustScore,
+  applyContributorTrustForOutcome,
+  applySponsorTrustForOutcome,
+  resetContributorStreakOnDispute,
+} = require("../services/trustScore");
 
 function normalizeIdentity(value) {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
@@ -69,6 +74,14 @@ router.post("/:bountyId/raise", async (req, res) => {
     const normalizedContributorEmail = normalizeIdentity(contributorEmail || latestSub?.contributorEmail);
     if (normalizedContributorEmail) {
       participantIdentitySeed.add(normalizedContributorEmail);
+    }
+
+    const contributorIdentityForTrust = contributorEmail
+      || latestSub?.contributorEmail
+      || contributorAddress;
+
+    if (contributorIdentityForTrust) {
+      await resetContributorStreakOnDispute(contributorIdentityForTrust);
     }
 
     const allUsers = await getAllUsers();
@@ -163,7 +176,11 @@ router.post("/:bountyId/raise", async (req, res) => {
       createdAt: new Date().toISOString()
     });
 
-    await updateBounty(bountyId, { status: "disputed" });
+    await updateBounty(bountyId, {
+      status: "disputed",
+      hadDispute: true,
+      reviewOutcome: "dispute_open",
+    });
     const subs = await getSubmissionsByBounty(bountyId);
     for (let s of subs) {
       await updateSubmission(s.id, { status: "disputed" });
@@ -226,6 +243,7 @@ router.post("/:disputeId/vote", async (req, res) => {
   try {
     const { validatorAddress, approve } = req.body; // approve is boolean
     const disputeId = req.params.disputeId;
+    let trustChanges = null;
 
     const dispute = await getDispute(disputeId);
     if (!dispute) return res.status(404).json({ error: "Dispute not found" });
@@ -261,14 +279,52 @@ router.post("/:disputeId/vote", async (req, res) => {
     // Check execution
     if (dispute.votes.approve >= 2 || dispute.votes.reject >= 2) {
       const isApprovedByMajority = dispute.votes.approve >= 2;
-      await updateDispute(disputeId, { status: "resolved", outcome: isApprovedByMajority ? "approved" : "rejected" });
-      await updateBounty(dispute.bountyId, { status: isApprovedByMajority ? "approved" : "refunded" });
+      const decisionAt = new Date();
+
+      await updateDispute(disputeId, {
+        status: "resolved",
+        outcome: isApprovedByMajority ? "approved" : "rejected",
+        resolvedAt: decisionAt,
+      });
+
+      await updateBounty(dispute.bountyId, {
+        status: isApprovedByMajority ? "approved" : "refunded",
+        sponsorDecisionAt: decisionAt,
+        resolvedAt: decisionAt,
+        hadDispute: true,
+        reviewOutcome: isApprovedByMajority
+          ? "dispute_contributor_won"
+          : "dispute_sponsor_won",
+      });
 
       // Cascade to submissions
       const subs = await getSubmissionsByBounty(dispute.bountyId);
+      const latestSub = [...subs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+      const bounty = await getBounty(dispute.bountyId);
+
       for (let s of subs) {
         await updateSubmission(s.id, { status: isApprovedByMajority ? "approved" : "rejected" });
       }
+
+      const contributorIdentity = latestSub?.contributorEmail || latestSub?.contributorAddress;
+      const sponsorIdentity = bounty?.sponsorEmail || dispute.raisedBy;
+
+      const contributorTrust = await applyContributorTrustForOutcome({
+        contributorIdentity,
+        bountyValueAlgo: bounty?.amount,
+        deadline: bounty?.deadline,
+        submissionAt: latestSub?.createdAt || bounty?.firstSubmittedAt,
+        disputeOutcome: isApprovedByMajority ? "contributor_won" : "contributor_lost",
+      });
+
+      const sponsorTrust = await applySponsorTrustForOutcome({
+        sponsorIdentity,
+        bountyValueAlgo: bounty?.amount,
+        submissionAt: latestSub?.createdAt || bounty?.firstSubmittedAt,
+        decisionAt,
+        outcome: isApprovedByMajority ? "dispute_contributor_won" : "dispute_sponsor_won",
+        submissionCount: subs.length,
+      });
 
       await createTransaction({
         id: uuidv4(),
@@ -276,36 +332,59 @@ router.post("/:disputeId/vote", async (req, res) => {
         action: "dispute_resolved",
         actor: "ValidatorConsensus",
         txId: "mock_resolved_txid",
-        amount: 0, // Should be bounty amount but mapped earlier
-        timestamp: new Date().toISOString()
+        amount: bounty?.amount || 0,
+        timestamp: decisionAt.toISOString(),
+        trustDeltaContributor: contributorTrust?.delta,
+        trustDeltaSponsor: sponsorTrust?.delta,
+        trustFormulaSnapshot: {
+          contributor: contributorTrust?.formulaSnapshot || null,
+          sponsor: sponsorTrust?.formulaSnapshot || null,
+        },
       });
 
-      // Resolve Trust Scores via the algorithm
-      const contributorMock = "CONTRIBUTOR_MOCK"; // Usually fetched from bounty doc
-      const sponsorAddr = dispute.raisedBy;
-
-      if (isApprovedByMajority) {
-        // Contributor wins
-        await updateTrustScore(contributorMock, 5, "dispute_won");
-        await updateTrustScore(sponsorAddr, -15, "dispute_lost_unfair");
-      } else {
-        // Sponsor wins
-        await updateTrustScore(sponsorAddr, 5, "dispute_won");
-        await updateTrustScore(contributorMock, -15, "dispute_lost_poor_work");
-      }
-
-      // Reward logic for validators
+      // Validator reward/penalty remains separate from contributor/sponsor formula.
+      const validatorTrustUpdates = [];
       for (const voter of dispute.voters) {
         const wasCorrect = voter.approved === isApprovedByMajority;
         if (wasCorrect) {
-          await updateTrustScore(voter.address, 3, "correct_vote");
+          const updateResult = await updateTrustScore(voter.address, 3, "correct_vote");
+          if (updateResult?.applied) validatorTrustUpdates.push(updateResult);
         } else {
-          await updateTrustScore(voter.address, -5, "incorrect_vote");
+          const updateResult = await updateTrustScore(voter.address, -5, "incorrect_vote");
+          if (updateResult?.applied) validatorTrustUpdates.push(updateResult);
         }
       }
+
+      trustChanges = {
+        contributor: contributorTrust
+          ? {
+              oldScore: contributorTrust.oldScore,
+              newScore: contributorTrust.newScore,
+              delta: contributorTrust.delta,
+            }
+          : null,
+        sponsor: sponsorTrust
+          ? {
+              oldScore: sponsorTrust.oldScore,
+              newScore: sponsorTrust.newScore,
+              delta: sponsorTrust.delta,
+            }
+          : null,
+        validators: validatorTrustUpdates.map((item) => ({
+          userId: item.userId,
+          oldScore: item.oldScore,
+          newScore: item.newScore,
+          delta: item.delta,
+        })),
+      };
     }
 
-    res.json({ success: true, votes: dispute.votes, resolved: dispute.votes.approve >= 2 || dispute.votes.reject >= 2 });
+    res.json({
+      success: true,
+      votes: dispute.votes,
+      resolved: dispute.votes.approve >= 2 || dispute.votes.reject >= 2,
+      trustChanges,
+    });
 
   } catch (error) {
     res.status(500).json({ error: error.message });

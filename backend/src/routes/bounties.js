@@ -4,13 +4,24 @@ const { v4: uuidv4 } = require("uuid");
 const algosdk = require("algosdk");
 const { hashBrief } = require("../services/hashing");
 const { buildAppCallTxn, buildPayTxn, submitSignedTxn, deployBountyContract } = require("../services/algorand");
-const { createBounty, getBounty, updateBounty, getAllBounties, createTransaction } = require("../services/mongo");
-const { updateTrustScore } = require("../services/trustScore");
+const {
+  createBounty,
+  getBounty,
+  updateBounty,
+  getAllBounties,
+  createTransaction,
+  getSubmissionsByBounty,
+  updateSubmission,
+} = require("../services/mongo");
+const {
+  applyContributorTrustForOutcome,
+  applySponsorTrustForOutcome,
+} = require("../services/trustScore");
 
 // POST /create
 router.post("/create", async (req, res) => {
   try {
-    const { title, description, reward, deadline, sponsorAddress } = req.body;
+    const { title, description, reward, deadline, sponsorAddress, sponsorEmail } = req.body;
     const briefHash = hashBrief(description);
     const isDemoAddress = sponsorAddress && sponsorAddress.startsWith("DEMO_");
     
@@ -66,6 +77,7 @@ router.post("/confirm", async (req, res) => {
     const newBounty = {
         id: bountyId,
         sponsorAddress: bountyData.sponsorAddress,
+      sponsorEmail: bountyData.sponsorEmail || null,
         title: bountyData.title,
         description: bountyData.description,
         briefHash: bountyData.briefHash,
@@ -133,31 +145,79 @@ router.get("/:id", async (req, res) => {
 router.post("/:id/approve", async (req, res) => {
   try {
     const bounty = await getBounty(req.params.id);
-    const { sponsorAddress, contributorAddress, mockSignedSubmit = false } = req.body;
+    const {
+      sponsorAddress,
+      sponsorEmail,
+      contributorAddress,
+      contributorEmail,
+      mockSignedSubmit = false,
+    } = req.body;
     const isDemoAddress = sponsorAddress && sponsorAddress.startsWith("DEMO_");
+
+    if (!bounty) {
+      return res.status(404).json({ error: "Bounty not found" });
+    }
     
     if (bounty.status !== "submitted") {
         return res.status(400).json({ error: "Bounty must be in submitted status" });
     }
     
     let unsignedTxnBase64 = null;
+    let trustChanges = null;
     if (!isDemoAddress) {
       const appCallTxn = await buildAppCallTxn(sponsorAddress, "approve", [], bounty.appId);
       unsignedTxnBase64 = Buffer.from(appCallTxn.toByte()).toString('base64');
     }
+
+    const subs = await getSubmissionsByBounty(bounty.id);
+    const latestSub = [...subs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
     
     if (mockSignedSubmit || isDemoAddress) {
-         await updateBounty(bounty.id, { status: "approved" });
+         const decisionAt = new Date();
+         const sponsorReviewOutcome = subs.length > 1
+           ? "approved_after_revision"
+           : "approved_first_submission";
+
+         await updateBounty(bounty.id, {
+           status: "approved",
+           sponsorDecisionAt: decisionAt,
+           resolvedAt: decisionAt,
+           hadDispute: false,
+           reviewOutcome: sponsorReviewOutcome,
+         });
          
          // Cascade status properly to submissions
-         const { getSubmissionsByBounty, updateSubmission } = require("../services/mongo");
-         const subs = await getSubmissionsByBounty(bounty.id);
          for (let s of subs) {
              await updateSubmission(s.id, { status: "approved" });
          }
 
-         await updateTrustScore(contributorAddress, 10, "bounty_completed");
-         await updateTrustScore(sponsorAddress, 5, "bounty_settled");
+         const contributorIdentity = contributorEmail
+           || latestSub?.contributorEmail
+           || contributorAddress
+           || latestSub?.contributorAddress;
+
+         const sponsorIdentity = sponsorEmail
+           || bounty.sponsorEmail
+           || sponsorAddress
+           || bounty.sponsorAddress;
+
+         const contributorTrust = await applyContributorTrustForOutcome({
+           contributorIdentity,
+           bountyValueAlgo: bounty.amount,
+           deadline: bounty.deadline,
+           submissionAt: latestSub?.createdAt || bounty.firstSubmittedAt,
+           disputeOutcome: "none",
+         });
+
+         const sponsorTrust = await applySponsorTrustForOutcome({
+           sponsorIdentity,
+           bountyValueAlgo: bounty.amount,
+           submissionAt: latestSub?.createdAt || bounty.firstSubmittedAt,
+           decisionAt,
+           outcome: sponsorReviewOutcome,
+           submissionCount: subs.length,
+         });
+
          await createTransaction({
              id: uuidv4(),
              bountyId: bounty.id,
@@ -165,14 +225,38 @@ router.post("/:id/approve", async (req, res) => {
              actor: sponsorAddress,
              txId: isDemoAddress ? "demo_approval_txid" : "mock_approval_txid",
              amount: bounty.amount,
-             timestamp: new Date().toISOString()
+             timestamp: decisionAt.toISOString(),
+             trustDeltaContributor: contributorTrust?.delta,
+             trustDeltaSponsor: sponsorTrust?.delta,
+             trustFormulaSnapshot: {
+               contributor: contributorTrust?.formulaSnapshot || null,
+               sponsor: sponsorTrust?.formulaSnapshot || null,
+             },
          });
+
+         trustChanges = {
+           contributor: contributorTrust
+             ? {
+                 oldScore: contributorTrust.oldScore,
+                 newScore: contributorTrust.newScore,
+                 delta: contributorTrust.delta,
+               }
+             : null,
+           sponsor: sponsorTrust
+             ? {
+                 oldScore: sponsorTrust.oldScore,
+                 newScore: sponsorTrust.newScore,
+                 delta: sponsorTrust.delta,
+               }
+             : null,
+         };
     }
 
     res.json({
         success: true,
         message: "Sign this transaction to approve",
-        unsignedAppCallTxn: unsignedTxnBase64
+        unsignedAppCallTxn: unsignedTxnBase64,
+        trustChanges,
     });
     
   } catch (error) {
