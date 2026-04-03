@@ -1,3 +1,13 @@
+# Team Midnight_Protocol
+
+###  Team Members
+
+| Name |
+| :--- |
+| **Dhairya Jotwani** |
+| **Dhruv Katheria** |
+| **Reva Kale** |
+| **Shreya Kesti** |
 # SettleChain
 **Trust layer for the gig economy. Code enforces fairness.**
 
