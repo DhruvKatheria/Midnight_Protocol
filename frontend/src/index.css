@@ -4,17 +4,32 @@
 
 @layer base {
   body {
-    @apply bg-background text-on-surface font-body tracking-wide;
+    @apply bg-surface text-on-surface font-body;
     background-attachment: fixed;
   }
 }
 
 @layer components {
-  /* Glassmorphic Navbar */
+  /* Obsidian Ledger Surface Levels */
+  .surface-0 { @apply bg-surface; }
+  .surface-1 { @apply bg-surface-container-low; }
+  .surface-2 { @apply bg-surface-container-high; }
+  .surface-3 { @apply bg-surface-container-highest; }
+
+  /* The No-Line Rule: Explicitly using background shifts instead of borders */
+  .no-border-card {
+    @apply bg-surface-container-low rounded-xl p-6 transition-all duration-300;
+  }
+  .no-border-card:hover {
+    @apply -translate-y-1 shadow-[0_0_20px_rgba(105,218,255,0.05)];
+  }
+
+  /* Glassmorphic Navbar (Sticky) */
   .glass-nav {
     background: rgba(26, 25, 25, 0.7);
     backdrop-filter: blur(32px);
     -webkit-backdrop-filter: blur(32px);
+    box-shadow: 0px 4px 20px rgba(0,0,0, 0.4);
   }
 
   /* Glass Panels */
@@ -28,20 +43,8 @@
     background: rgba(22, 22, 22, 0.7);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  /* Hero glow */
-  .hero-glow {
-    background: radial-gradient(circle at 50% 50%, rgba(105, 218, 255, 0.08) 0%, transparent 70%);
-  }
-
-  /* Mesh gradient backgrounds */
-  .mesh-gradient {
-    background: radial-gradient(at 0% 0%, rgba(0, 164, 255, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(137, 165, 255, 0.05) 0px, transparent 50%),
-                radial-gradient(at 50% 100%, rgba(0, 207, 252, 0.05) 0px, transparent 50%),
-                #0e0e0e;
+    /* Ghost border fallback only for inputs or high-contrast needs */
+    border: 1px solid rgba(73, 72, 71, 0.15); 
   }
 
   /* Gradient text */
@@ -57,51 +60,27 @@
     background: linear-gradient(135deg, #69daff 0%, #00cffc 100%);
   }
 
-  .primary-gradient {
-    background: linear-gradient(135deg, #69daff 0%, #00cffc 100%);
-  }
-
-  /* Bento card hover */
-  .bento-card-hover {
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  .bento-card-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 20px rgba(105, 218, 255, 0.1);
-  }
-
-  /* Bounty card hover */
-  .bounty-card {
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  .bounty-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 20px rgba(105, 218, 255, 0.1);
-  }
-
   /* Primary button */
   .primary-btn {
-    @apply cta-gradient text-on-primary-container font-bold py-3 px-6 rounded-xl transition duration-300 hover:brightness-110 focus:outline-none active:scale-95;
+    @apply cta-gradient text-on-primary-fixed font-headline font-bold py-3 px-6 rounded-xl transition duration-300 hover:brightness-110 focus:outline-none active:scale-95 shadow-[0_4px_24px_rgba(105,218,255,0.2)];
   }
 
   /* Secondary button */
   .secondary-btn {
-    @apply bg-surface-container-highest text-on-surface font-bold py-3 px-6 rounded-xl transition duration-300 hover:bg-surface-bright focus:outline-none active:scale-95;
-  }
-
-  /* Neon text */
-  .neon-text {
-    @apply text-primary drop-shadow-[0_0_8px_rgba(105,218,255,0.8)];
-  }
-
-  /* Header gradient */
-  .header-gradient {
-    @apply gradient-text font-extrabold;
+    @apply bg-surface-container-highest text-on-surface font-headline font-bold py-3 px-6 rounded-xl transition duration-300 hover:bg-surface-bright focus:outline-none active:scale-95;
   }
 
   /* Input field styling */
   .input-field {
     @apply w-full bg-surface-container-lowest border-none rounded-xl px-4 py-3 text-on-surface placeholder-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition duration-200;
+  }
+
+  /* Sidebar link transition */
+  .sidebar-link {
+    @apply flex items-center gap-3 px-6 py-4 text-on-surface-variant transition-all hover:text-on-surface hover:bg-surface-container-high/40 active:scale-98;
+  }
+  .sidebar-link-active {
+    @apply sidebar-link text-primary bg-primary/5 border-r-2 border-primary font-bold;
   }
 }
 
@@ -114,4 +93,7 @@
 /* Material Symbols */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
 }
+
