@@ -170,6 +170,15 @@ async function getDisputesByBounty(bountyId) {
   }
 }
 
+async function getAllOpenDisputes() {
+  try {
+    return await Dispute.find({ status: "open" }).lean();
+  } catch (err) {
+    console.error("Error fetching open disputes:", err);
+    throw err;
+  }
+}
+
 async function updateDispute(disputeId, updates) {
   try {
     await Dispute.findOneAndUpdate({ id: disputeId }, updates);
@@ -255,6 +264,7 @@ module.exports = {
   createDispute,
   getDispute,
   getDisputesByBounty,
+  getAllOpenDisputes,
   updateDispute,
   
   // Transactions

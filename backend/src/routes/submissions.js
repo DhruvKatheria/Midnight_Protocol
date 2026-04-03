@@ -53,7 +53,7 @@ router.post("/submit", upload.single("workFile"), async (req, res) => {
         createdAt: new Date().toISOString()
     });
     
-    await updateBounty(bountyId, { status: "submitted" });
+    await updateBounty(bountyId, { status: "submitted", contributorAddress });
     
     await createTransaction({
         id: uuidv4(),
@@ -117,7 +117,23 @@ router.get("/mine", async (req, res) => {
     const address = req.query.address;
     if (!address) return res.status(400).json({ error: "Address is required" });
     const submissions = await getSubmissionsByUser(address);
-    res.json({ success: true, submissions });
+    
+    // Retroactive Auto-Sync for older test data before the cascade fix
+    const syncedSubmissions = [];
+    for (let s of submissions) {
+        if (s.status === "pending") {
+            const b = await getBounty(s.bountyId);
+            if (b && b.status !== "open" && b.status !== "submitted") {
+               // Update it in DB and memory
+               const newStatus = b.status === "refunded" ? "rejected" : b.status;
+               await updateSubmission(s.id, { status: newStatus });
+               s.status = newStatus;
+            }
+        }
+        syncedSubmissions.push(s);
+    }
+    
+    res.json({ success: true, submissions: syncedSubmissions });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

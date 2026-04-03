@@ -9,6 +9,7 @@ export default function BountyDetail() {
   const { address, signAndSend } = useWallet();
   const navigate = useNavigate();
   const [bounty, setBounty] = useState(null);
+  const [bountyDisputes, setBountyDisputes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [workText, setWorkText] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -20,8 +21,12 @@ export default function BountyDetail() {
   const fetchBounty = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/api/bounties/${id}`);
-      setBounty(res.data);
+      const [bountyRes, disputesRes] = await Promise.all([
+        api.get(`/api/bounties/${id}`),
+        api.get(`/api/disputes/bounty/${id}`)
+      ]);
+      setBounty(bountyRes.data);
+      setBountyDisputes(disputesRes.data.disputes || []);
     } catch (err) {
       toast.error("Failed to load bounty details.");
     } finally {
@@ -138,7 +143,6 @@ export default function BountyDetail() {
             </div>
             <code className="text-sm text-primary font-mono break-all block bg-surface-container-lowest p-4 rounded-lg">{bounty.briefHash || "Not available"}</code>
           </div>
-
           {/* Submissions List */}
           {bounty.submissions && bounty.submissions.length > 0 && (
             <div className="space-y-4">
@@ -157,6 +161,36 @@ export default function BountyDetail() {
                   {s.contributorAddress === address && !s.revealed && (
                     <button onClick={() => handleReveal(s.id)} className="mt-4 text-primary text-sm font-bold hover:underline">Reveal Proof →</button>
                   )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Disputes List */}
+          {bountyDisputes && bountyDisputes.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-headline font-bold text-error">Live Disputes</h3>
+              {bountyDisputes.map(d => (
+                <div key={d.id} className="bg-error-container/5 p-6 rounded-xl border border-error/20">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <p className="font-bold text-on-surface">Ticket: #{d.id?.substring(0,8)}</p>
+                      <p className="text-xs text-on-surface-variant mt-1 uppercase tracking-widest text-error">Sponsor Raised Issue</p>
+                    </div>
+                    <span className={`text-[10px] font-bold px-3 py-1 rounded-full ${d.status === 'open' ? 'bg-error/20 text-error' : 'bg-surface-container-highest text-on-surface'}`}>
+                      {d.status?.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="mb-4 bg-surface-container-lowest p-4 rounded-lg">
+                    <p className="text-sm italic text-on-surface-variant">"{d.reason}"</p>
+                  </div>
+                  <div className="flex justify-between items-center text-sm border-t border-error/10 pt-4">
+                    <span className="font-bold text-on-surface">Validator Consensus:</span>
+                    <div className="flex gap-4 font-mono font-bold">
+                      <span className="text-primary">{d.votes?.approve || 0} Appr</span>
+                      <span className="text-error">{d.votes?.reject || 0} Rej</span>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

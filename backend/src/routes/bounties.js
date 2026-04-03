@@ -148,6 +148,14 @@ router.post("/:id/approve", async (req, res) => {
     
     if (mockSignedSubmit || isDemoAddress) {
          await updateBounty(bounty.id, { status: "approved" });
+         
+         // Cascade status properly to submissions
+         const { getSubmissionsByBounty, updateSubmission } = require("../services/mongo");
+         const subs = await getSubmissionsByBounty(bounty.id);
+         for (let s of subs) {
+             await updateSubmission(s.id, { status: "approved" });
+         }
+
          await updateTrustScore(contributorAddress, 10, "bounty_completed");
          await updateTrustScore(sponsorAddress, 5, "bounty_settled");
          await createTransaction({
