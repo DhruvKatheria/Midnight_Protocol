@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useWallet } from "../context/walletContext";
 
 export default function LandingPage() {
-  const { address, connectWallet } = useWallet();
+  const { address, role } = useWallet();
   const navigate = useNavigate();
   const [bounties, setBounties] = useState(0);
   const [locked, setLocked] = useState(0);
@@ -49,32 +49,44 @@ export default function LandingPage() {
             <div className="flex flex-wrap gap-4">
               {address ? (
                 <>
-                  <button
-                    onClick={() => navigate('/sponsor')}
-                    className="cta-gradient text-on-primary-container px-8 py-4 rounded-xl font-bold text-lg hover:brightness-110 transition-all active:scale-95"
-                  >
-                    Post a Bounty
-                  </button>
-                  <button
-                    onClick={() => navigate('/contributor')}
-                    className="bg-surface-container-highest text-on-surface px-8 py-4 rounded-xl font-bold text-lg hover:bg-surface-bright transition-all active:scale-95"
-                  >
-                    Find Work
-                  </button>
+                  {role === 'sponsor' && (
+                    <button
+                      onClick={() => navigate('/sponsor')}
+                      className="cta-gradient text-on-primary-container px-8 py-4 rounded-xl font-bold text-lg hover:brightness-110 transition-all active:scale-95"
+                    >
+                      Post a Bounty
+                    </button>
+                  )}
+                  {role === 'contributor' && (
+                    <button
+                      onClick={() => navigate('/contributor')}
+                      className="bg-surface-container-highest text-on-surface px-8 py-4 rounded-xl font-bold text-lg hover:bg-surface-bright transition-all active:scale-95"
+                    >
+                      Find Work
+                    </button>
+                  )}
+                  {(!role || role === 'validator') && (
+                    <button
+                      onClick={() => navigate('/validator')}
+                      className="cta-gradient text-on-primary-container px-8 py-4 rounded-xl font-bold text-lg hover:brightness-110 transition-all active:scale-95"
+                    >
+                      Validator Panel
+                    </button>
+                  )}
                 </>
               ) : (
                 <>
                   <button
-                    onClick={connectWallet}
+                    onClick={() => navigate('/login')}
                     className="cta-gradient text-on-primary-container px-8 py-4 rounded-xl font-bold text-lg hover:brightness-110 transition-all active:scale-95"
                   >
-                    Post a Bounty
+                    Login
                   </button>
                   <button
-                    onClick={connectWallet}
+                    onClick={() => navigate('/login')}
                     className="bg-surface-container-highest text-on-surface px-8 py-4 rounded-xl font-bold text-lg hover:bg-surface-bright transition-all active:scale-95"
                   >
-                    Find Work
+                    Signup
                   </button>
                 </>
               )}
@@ -195,7 +207,7 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
             <button
-              onClick={() => address ? navigate('/sponsor') : connectWallet()}
+              onClick={() => address ? (role === 'sponsor' ? navigate('/sponsor') : navigate('/contributor')) : navigate('/login')}
               className="cta-gradient text-on-primary-container px-10 py-5 rounded-2xl font-bold text-xl active:scale-95 transition-transform"
             >
               Get Started Now

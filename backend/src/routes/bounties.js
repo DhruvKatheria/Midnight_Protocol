@@ -3,7 +3,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const algosdk = require("algosdk");
 const { hashBrief } = require("../services/hashing");
-const { buildAppCallTxn, buildPayTxn, submitSignedTxn } = require("../services/algorand");
+const { buildAppCallTxn, buildPayTxn, submitSignedTxn, deployBountyContract } = require("../services/algorand");
 const { createBounty, getBounty, updateBounty, getAllBounties, createTransaction } = require("../services/mongo");
 const { updateTrustScore } = require("../services/trustScore");
 
@@ -25,11 +25,17 @@ router.post("/create", async (req, res) => {
       return;
     }
     
-    // Dynamically calculate app address to prevent module caching race conditions
-    const APP_ID = parseInt(process.env.APP_ID || "0");
-    const APP_ADDRESS = APP_ID !== 0 ? algosdk.getApplicationAddress(APP_ID) : "MOCK_APP_ADDRESS";
+    let APP_ID, APP_ADDRESS;
+    if (!isDemoAddress) {
+      const deployed = await deployBountyContract();
+      APP_ID = deployed.appId;
+      APP_ADDRESS = deployed.appAddress;
+    } else {
+      APP_ID = 0;
+      APP_ADDRESS = "MOCK_APP_ADDRESS";
+    }
 
-    let appCallTxn = await buildAppCallTxn(sponsorAddress, "lock", [briefHash, deadline]);
+    let appCallTxn = await buildAppCallTxn(sponsorAddress, "lock", [briefHash, deadline], APP_ID);
     let payTxn = await buildPayTxn(sponsorAddress, APP_ADDRESS, reward);
     
     // Group the transactions atomically — payTxn MUST be Gtxn[0] (contract asserts Gtxn[0] is Payment)
@@ -38,6 +44,7 @@ router.post("/create", async (req, res) => {
     res.json({
       success: true,
       briefHash,
+      appId: APP_ID,
       unsignedPayTxn: Buffer.from(payTxn.toByte()).toString('base64'),
       unsignedAppCallTxn: Buffer.from(appCallTxn.toByte()).toString('base64')
     });
@@ -66,7 +73,7 @@ router.post("/confirm", async (req, res) => {
         deadline: bountyData.deadline,
         status: "open",
         txId,
-        appId: process.env.APP_ID,
+        appId: bountyData.appId,
         createdAt: new Date().toISOString()
     };
     
@@ -135,7 +142,7 @@ router.post("/:id/approve", async (req, res) => {
     
     let unsignedTxnBase64 = null;
     if (!isDemoAddress) {
-      const appCallTxn = await buildAppCallTxn(sponsorAddress, "approve", []);
+      const appCallTxn = await buildAppCallTxn(sponsorAddress, "approve", [], bounty.appId);
       unsignedTxnBase64 = Buffer.from(appCallTxn.toByte()).toString('base64');
     }
     

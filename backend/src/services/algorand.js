@@ -1,4 +1,6 @@
 const algosdk = require("algosdk");
+const fs = require("fs");
+const path = require("path");
 
 // Create Algorand client
 const algodClient = new algosdk.Algodv2(
@@ -14,9 +16,67 @@ const indexerClient = new algosdk.Indexer(
   ""
 );
 
-// App ID (you will update this after deploying contract)
-const APP_ID = parseInt(process.env.APP_ID || "0");
-const APP_ADDRESS = APP_ID !== 0 ? algosdk.getApplicationAddress(APP_ID) : "MOCK_APP_ADDRESS";
+// App ID defaults
+const DEFAULT_APP_ID = parseInt(process.env.APP_ID || "0");
+const DEFAULT_APP_ADDRESS = DEFAULT_APP_ID !== 0 ? algosdk.getApplicationAddress(DEFAULT_APP_ID) : "MOCK_APP_ADDRESS";
+
+// 🚀 Deploy Contract Programmatically
+async function deployBountyContract() {
+  try {
+    const mnemonic = process.env.ALGORAND_MNEMONIC;
+    if (!mnemonic) throw new Error("ALGORAND_MNEMONIC not set in .env");
+
+    const deployerAccount = algosdk.mnemonicToSecretKey(mnemonic);
+
+    const baseDir = path.resolve(__dirname, "../../../smart-contracts/artifacts");
+    const approvalTeal = fs.readFileSync(path.join(baseDir, "approval.teal"), "utf8");
+    const clearTeal = fs.readFileSync(path.join(baseDir, "clear.teal"), "utf8");
+
+    const approvalCompiled = await algodClient.compile(approvalTeal).do();
+    const clearCompiled = await algodClient.compile(clearTeal).do();
+
+    const approvalProgram = new Uint8Array(Buffer.from(approvalCompiled.result, "base64"));
+    const clearProgram = new Uint8Array(Buffer.from(clearCompiled.result, "base64"));
+
+    const suggestedParams = await algodClient.getTransactionParams().do();
+    
+    const txn = algosdk.makeApplicationCreateTxnFromObject({
+      from: deployerAccount.addr,
+      suggestedParams,
+      onCompletion: algosdk.OnApplicationComplete.NoOpOC,
+      approvalProgram,
+      clearProgram,
+      numGlobalInts: 5,
+      numGlobalByteSlices: 7,
+      numLocalInts: 0,
+      numLocalByteSlices: 0,
+    });
+
+    const signedTxn = txn.signTxn(deployerAccount.sk);
+    const { txId } = await algodClient.sendRawTransaction(signedTxn).do();
+    const confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 6);
+    
+    const appId = confirmedTxn["application-index"];
+    const appAddress = algosdk.getApplicationAddress(appId);
+
+    // Fund the App with 0.2 ALGO
+    const fundParams = await algodClient.getTransactionParams().do();
+    const fundTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+        from: deployerAccount.addr,
+        to: appAddress,
+        amount: 200000,
+        suggestedParams: fundParams
+    });
+    const signedFundTxn = fundTxn.signTxn(deployerAccount.sk);
+    const fundRes = await algodClient.sendRawTransaction(signedFundTxn).do();
+    await algosdk.waitForConfirmation(algodClient, fundRes.txId, 6);
+
+    return { appId, appAddress };
+  } catch (err) {
+    console.error("Failed to deploy bounty contract:", err);
+    throw err;
+  }
+}
 
 // 🧠 1. Get Contract Global State
 async function getContractState() {
@@ -46,13 +106,13 @@ async function getContractState() {
 
 
 // 🧱 2. Build Smart Contract Call (UNSIGNED)
-async function buildAppCallTxn(senderAddress, method, args = []) {
+async function buildAppCallTxn(senderAddress, method, args = [], targetAppId = DEFAULT_APP_ID) {
   try {
     const suggestedParams = await algodClient.getTransactionParams().do();
 
     const txn = algosdk.makeApplicationCallTxnFromObject({
       from: senderAddress,
-      appIndex: APP_ID,
+      appIndex: parseInt(targetAppId),
       onCompletion: algosdk.OnApplicationComplete.NoOpOC,
       appArgs: [
         new TextEncoder().encode(method),
@@ -104,8 +164,16 @@ async function buildPayTxn(sender, receiver, amount) {
 async function submitSignedTxn(signedTxnPayload) {
   try {
     let groupedTxnBuffer;
+    
+    // Check if it's an array of number arrays (from our robust JSON msgpack conversion)
     if (Array.isArray(signedTxnPayload)) {
-      groupedTxnBuffer = Buffer.concat(signedTxnPayload.map((b64) => Buffer.from(b64, "base64")));
+      if (Array.isArray(signedTxnPayload[0])) {
+         // Fix for msgpack array of numbers
+         groupedTxnBuffer = Buffer.concat(signedTxnPayload.map(arr => Buffer.from(arr)));
+      } else {
+         // Keep old b64 fallback just in case
+         groupedTxnBuffer = Buffer.concat(signedTxnPayload.map((b64) => Buffer.from(b64, "base64")));
+      }
     } else {
       groupedTxnBuffer = Buffer.from(signedTxnPayload, "base64");
     }
@@ -141,11 +209,10 @@ async function getTransaction(txId) {
 module.exports = {
   algodClient,
   indexerClient,
+  deployBountyContract,
   buildAppCallTxn,
   buildPayTxn,
   submitSignedTxn,
   getContractState,
   getTransaction,
-  APP_ID,
-  APP_ADDRESS
 };

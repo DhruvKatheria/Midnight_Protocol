@@ -124,13 +124,7 @@ export function WalletProvider({ children }) {
       
       const signedTxns = await peraWallet.signTransaction([decodedTxnGroups]);
       toast.success("Transaction signed successfully!");
-      return signedTxns.map(tx => {
-         let binary = "";
-         for (let i = 0; i < tx.byteLength; i++) {
-             binary += String.fromCharCode(tx[i]);
-         }
-         return btoa(binary);
-      });
+      return signedTxns.map(tx => Array.from(tx));
     } catch (error) {
       toast.error("User rejected transaction or Pera failed.");
       throw error;

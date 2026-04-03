@@ -22,7 +22,6 @@ export default function Navbar() {
           </Link>
           <div className="hidden md:flex items-center gap-6">
             <NavLink to={getDashboardPath()} className={linkClass}>{dashboardLabel}</NavLink>
-            <NavLink to="/validator" className={linkClass}>Validator</NavLink>
             <NavLink to="/transactions/all" className={linkClass}>Log</NavLink>
           </div>
         </div>

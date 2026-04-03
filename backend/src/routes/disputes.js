@@ -23,7 +23,14 @@ router.post("/:bountyId/raise", async (req, res) => {
         console.warn("Using mock validators:", e.message);
     }
 
-    const appCallTxn = await buildAppCallTxn(sponsorAddress, "dispute", validatorsAccs);
+    const bounty = await updateBounty(bountyId, { status: "disputed" }); // we need the bounty object for appId
+    // Actually we should get it first
+    const { getBounty } = require("../services/mongo");
+    const bountyObj = await getBounty(bountyId);
+    
+    if (!isDemoAddress && !bountyObj.appId) throw new Error("Bounty missing appId");
+    
+    const appCallTxn = await buildAppCallTxn(sponsorAddress, "dispute", validatorsAccs, bountyObj.appId);
     const disputeId = uuidv4();
     
     await createDispute({

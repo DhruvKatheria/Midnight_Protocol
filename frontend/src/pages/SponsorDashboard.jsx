@@ -39,7 +39,7 @@ export default function SponsorDashboard() {
       const parsedDeadline = deadline ? Math.floor(new Date(deadline).getTime() / 1000) : 0;
       const payload = { title, description, reward: parseInt(reward), deadline: parsedDeadline, sponsorAddress: address };
       const res = await api.post("/api/bounties/create", payload);
-      const { briefHash, unsignedAppCallTxn, unsignedPayTxn } = res.data;
+      const { briefHash, unsignedAppCallTxn, unsignedPayTxn, appId } = res.data;
 
       let signedTxns = [];
       if (unsignedAppCallTxn && unsignedPayTxn) {
@@ -53,7 +53,7 @@ export default function SponsorDashboard() {
       }
 
       toast.loading("Confirming on blockchain...", { id: createToast });
-      await api.post("/api/bounties/confirm", { signedGroupTxnBase64: signedTxns, bountyData: { ...payload, briefHash } });
+      await api.post("/api/bounties/confirm", { signedGroupTxnBase64: signedTxns, bountyData: { ...payload, briefHash, appId } });
       toast.success(`Bounty created! Brief hash: ${briefHash.substring(0,8)}...`, { id: createToast });
       fetchMyBounties();
       setTitle(""); setDescription(""); setReward(""); setDeadline("");

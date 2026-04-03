@@ -14,6 +14,7 @@ import SponsorDashboard from "./pages/SponsorDashboard";
 import ContributorDashboard from "./pages/ContributorDashboard";
 import BountyDetail from "./pages/BountyDetail";
 import ValidatorPanel from "./pages/ValidatorPanel";
+import ProtectedRoute from "./components/ProtectedRoute";
 import TransactionLog from "./pages/TransactionLog";
 import ProfilePage from "./pages/ProfilePage";
 
@@ -38,12 +39,36 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/sponsor" element={<SponsorDashboard />} />
-            <Route path="/contributor" element={<ContributorDashboard />} />
-            <Route path="/bounty/:id" element={<BountyDetail />} />
-            <Route path="/validator" element={<ValidatorPanel />} />
-            <Route path="/transactions/:bountyId" element={<TransactionLog />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/sponsor" element={
+              <ProtectedRoute allowedRoles={['sponsor']}>
+                <SponsorDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/contributor" element={
+              <ProtectedRoute allowedRoles={['contributor']}>
+                <ContributorDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/validator" element={
+              <ProtectedRoute allowedRoles={['validator']}>
+                <ValidatorPanel />
+              </ProtectedRoute>
+            } />
+            <Route path="/bounty/:id" element={
+              <ProtectedRoute>
+                <BountyDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="/transactions/:bountyId" element={
+              <ProtectedRoute>
+                <TransactionLog />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            } />
           </Routes>
         </main>
         <Footer />

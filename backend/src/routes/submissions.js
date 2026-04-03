@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const { hashBrief, verifyBrief } = require("../services/hashing");
 const { uploadToIPFS } = require("../services/ipfs");
 const { buildAppCallTxn } = require("../services/algorand");
-const { createSubmission, getSubmissionsByBounty, updateBounty, getSubmission, updateSubmission, createTransaction } = require("../services/mongo");
+const { createSubmission, getSubmissionsByBounty, updateBounty, getSubmission, updateSubmission, createTransaction, getBounty } = require("../services/mongo");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -35,7 +35,9 @@ router.post("/submit", upload.single("workFile"), async (req, res) => {
     let unsignedTxnBase64 = null;
     
     if (!isDemoAddress) {
-      const appCallTxn = await buildAppCallTxn(contributorAddress, "submit", [workHashToVerify]);
+      const bounty = await getBounty(bountyId);
+      if (!bounty || !bounty.appId) throw new Error("Bounty missing or missing appId");
+      const appCallTxn = await buildAppCallTxn(contributorAddress, "submit", [workHashToVerify], bounty.appId);
       unsignedTxnBase64 = Buffer.from(appCallTxn.toByte()).toString('base64');
     }
     const submissionId = uuidv4();
