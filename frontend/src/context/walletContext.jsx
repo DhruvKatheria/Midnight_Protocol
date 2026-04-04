@@ -31,11 +31,20 @@ export function WalletProvider({ children }) {
     // Check if there was a demo session saved
     const savedDemo = sessionStorage.getItem("settlechain_demo");
     if (savedDemo) {
-      const { address: dAddr, role: dRole } = JSON.parse(savedDemo);
-      setAddress(dAddr);
-      setRole(dRole);
-      setIsDemoMode(true);
-      return;
+      try {
+        const parsed = JSON.parse(savedDemo);
+        if (parsed?.address && parsed?.role) {
+          const { address: dAddr, role: dRole } = parsed;
+          setAddress(dAddr);
+          setRole(dRole);
+          setIsDemoMode(true);
+          return;
+        }
+      } catch (e) {
+        console.warn("Invalid demo session data found, clearing it.", e);
+      }
+
+      sessionStorage.removeItem("settlechain_demo");
     }
 
     peraWallet.reconnectSession().then((accounts) => {
